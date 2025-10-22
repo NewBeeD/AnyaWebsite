@@ -54,34 +54,40 @@ export default function Navbar() {
         { name: 'Downloads', href: '/resources/downloads' },
         { name: 'For Leaders (Login)', href: '/resources/leaders' }
       ]
-    },
-    {
-      name: 'GIVE / SUPPORT',
-      href: '/give',
-      dropdown: null
-    },
+    }
+
+    
+  ];
+
+
+  const menuItems2 = [    
+    
     {
       name: 'CONTACT US',
       href: '/contact',
       dropdown: null
     }
-  ];
+  ]
 
   return (
+    
     <nav className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4">
+      <div className="w-full mx-auto px-2!">
+        
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex-shrink-0">
+          <div className="flex-shrink-0 ml-2">
             <Link href="/" className="text-2xl font-bold text-blue-800">
-              Your Church
+              ANYA
             </Link>
           </div>
 
           {/* Desktop Menu */}
-          <div className="hidden md:flex items-center space-x-4">
+          <div className="hidden md:flex justify-between items-center gap-x-7">
+            
             {menuItems.map((item) => (
-              <div key={item.name} className="relative group">
+              <div key={item.name} className="relative group ">
+                
                 {item.dropdown ? (
                   <button
                     onClick={() => toggleDropdown(item.name)}
@@ -116,6 +122,24 @@ export default function Navbar() {
                     ))}
                   </div>
                 )}
+              </div>
+            ))}
+
+          </div>
+
+          <div className="hidden md:flex items-center justify-between">
+            
+            {menuItems2.map((point, idx) => (
+
+              <div key={idx} className=''>
+
+                <Link
+                    href={point.href}
+                    className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200"
+                  >
+                    {point.name}
+                  </Link>
+
               </div>
             ))}
           </div>
