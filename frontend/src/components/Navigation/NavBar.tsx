@@ -71,8 +71,8 @@ export default function Navbar() {
 
   return (
     
-    <nav className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="w-full mx-auto px-2!">
+    <nav className="bg-white shadow-lg sticky flex justify-center z-50">
+      <div className="w-full md:w-[95%] mx-auto px-2!">
         
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -91,9 +91,11 @@ export default function Navbar() {
                 {item.dropdown ? (
                   <button
                     onClick={() => toggleDropdown(item.name)}
-                    className="px-3 py-2 text-gray-700 hover:text-blue-600 font-medium transition-colors duration-200 flex items-center "
+                    className="px-3 py-2 text-gray-700 hover:text-blue-600
+                     font-medium transition-colors duration-200 flex items-center gap-x-1"
                   >
                     {item.name}
+
                     <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
@@ -109,12 +111,12 @@ export default function Navbar() {
 
                 {/* Desktop Dropdown */}
                 {item.dropdown && activeDropdown === item.name && (
-                  <div className="absolute left-0 mt-2 w-56 bg-white rounded-md shadow-lg py-2 z-50 border border-gray-200">
+                  <div className="absolute left-0 mt-2 w-44 bg-white rounded-md shadow-lg py-2 z-50 border border-gray-200 gap-y-6 ">
                     {item.dropdown.map((subItem) => (
                       <Link
                         key={subItem.name}
                         href={subItem.href}
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200"
+                        className="block px-4 py-2 text-lg text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-200 pl-1!"
                         onClick={closeAll}
                       >
                         {subItem.name}
@@ -144,11 +146,13 @@ export default function Navbar() {
             ))}
           </div>
 
+          {/* End of Desktop Menu */}
+
           {/* Mobile menu button */}
           <div className="md:hidden">
             <button
               onClick={() => setIsOpen(!isOpen)}
-              className="text-gray-700 hover:text-blue-600 focus:outline-none focus:text-blue-600 p-2"
+              className="text-gray-700 hover:text-blue-900 focus:outline-none focus:text-blue-600 p-2"
             >
               <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 {isOpen ? (
@@ -163,14 +167,15 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         {isOpen && (
-          <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="md:hidden bg-white border-t border-gray-200 flex flex-col gap-y-1">
             {menuItems.map((item) => (
-              <div key={item.name}>
+              <div key={item.name} >
                 {item.dropdown ? (
-                  <div className="border-b border-gray-100">
+                  <div className="border-b border-gray-100 gap-y-40">
                     <button
                       onClick={() => toggleDropdown(item.name)}
-                      className="flex justify-between items-center w-full px-4 py-3 text-left text-gray-700 hover:bg-gray-50 font-medium"
+                      className="flex justify-between items-center w-full px-4 
+                       py-3 text-left text-gray-700 hover:bg-gray-50 font-medium "
                     >
                       {item.name}
                       <svg
