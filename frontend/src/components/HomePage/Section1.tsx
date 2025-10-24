@@ -11,7 +11,12 @@ const Section1 = () => {
 
   return(
 
-    <EmblaCarousel />
+    <div >
+
+      <EmblaCarousel />
+
+    </div>
+
   )
 }
 
