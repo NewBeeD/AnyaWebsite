@@ -42,12 +42,12 @@ const eventCategories = [
 
 export default function EventCategoriesShowcase() {
   return (
-    <section className="py-16! bg-gray-50 border border-red-950 px-2!">
-      <div className="container mx-auto px-4 max-w-6xl">
+    <section className="py-16! bg-gray-50 px-2!">
+      <div className="container mx-auto! px-4! max-w-6xl">
         
         {/* Section Header */}
         <div className="text-center mb-12!">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4!">
             Events for Everyone
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto!">

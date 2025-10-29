@@ -28,7 +28,7 @@ const upcomingEvents = [
 export default function EventHighlightsShowcase() {
   return (
     <section className="py-16! bg-gradient-to-br from-blue-50 to-indigo-50">
-      <div className="container mx-auto px-4! max-w-6xl">
+      <div className="container mx-auto! px-4! max-w-6xl">
         
         {/* Section Header */}
         <div className="text-center mb-12!">

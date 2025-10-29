@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function ChurchMapShowcase() {
   return (
     <section className="py-16! bg-white">
-      <div className="container mx-auto px-4! max-w-6xl">
+      <div className="container mx-auto! px-4! max-w-6xl">
         
         {/* Section Header */}
         <div className="text-center mb-12!">

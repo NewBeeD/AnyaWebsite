@@ -36,24 +36,24 @@ export default function Home() {
 
       <Section1 />
       <QuickStats />
+      <ImmediateValueSection />
       {/* <KeyAudiences /> */}
-      {/* <EventCategories /> */}
-      {/* <EventHighlights /> */}
-      {/* <ChurchMap /> */}
-      {/* <ActivityFeed /> */}
-      {/* <LeadershipSportlight /> */}
-      {/* <SermonHighlights /> */}
-      {/* <CommunityImpact /> */}
+      <EventCategories />
+      <EventHighlights />
+      <RandomBibleText />
+      <ChurchPrograms />
+      <ChurchMap />
+      <ActivityFeed />
+      <Testimonials />
+      <LeadershipSportlight />
+      <SermonHighlights />
+      <CommunityImpact />
       <Newsletter />
 
 
 
 
-      {/* <ImmediateValueSection /> */}
       {/* <KeyAudiencesSection /> */}
-      {/* <RandomBibleText /> */}
-      {/* <ChurchPrograms /> */}
-      {/* <Testimonials /> */}
       {/* <PrayerGroup /> */}
       
 
