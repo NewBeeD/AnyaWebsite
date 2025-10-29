@@ -30,7 +30,8 @@ const QuickStats = () => {
 }, []);
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 text-center py-3!">
+    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 text-center py-3! w-full">
+
       <div className="grid grid-cols-3 gap-4">
         <div>
           <div className="text-2xl font-bold text-indigo-700">{churchesCount}+</div>
