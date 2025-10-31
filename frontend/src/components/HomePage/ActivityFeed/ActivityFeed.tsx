@@ -45,7 +45,7 @@ export default function ActivityFeedShowcase() {
           <div className="space-y-6!">
             {recentActivities.map((activity, index) => (
               
-              <div key={index} className="flex items-start space-x-4! p-2! rounded-lg hover:bg-gray-50 transition-colors duration-200">
+              <div key={index} className="flex items-start gap-x-4! p-2! rounded-lg hover:bg-gray-50 transition-colors duration-200">
 
                 <div className="flex-shrink-0 w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 font-bold">
                   {activity.participants.split(' ')[0]}
@@ -71,20 +71,20 @@ export default function ActivityFeedShowcase() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6! mb-8! text-center">
           <div className="bg-white rounded-xl p-4! shadow-sm border border-gray-200">
-            <div className="text-2xl font-bold text-blue-600">1,200+</div>
+            <div className="text-2xl font-bold text-blue-600">600+</div>
             <div className="text-sm text-gray-600">Active Members</div>
           </div>
           <div className="bg-white rounded-xl p-4! shadow-sm border border-gray-200">
-            <div className="text-2xl font-bold text-blue-600">45</div>
+            <div className="text-2xl font-bold text-blue-600">5</div>
             <div className="text-sm text-gray-600">Events This Month</div>
           </div>
           <div className="bg-white rounded-xl p-4! shadow-sm border border-gray-200">
-            <div className="text-2xl font-bold text-blue-600">90</div>
+            <div className="text-2xl font-bold text-blue-600">30+</div>
             <div className="text-sm text-gray-600">Partner Churches</div>
           </div>
           <div className="bg-white rounded-xl p-4! shadow-sm border border-gray-200">
-            <div className="text-2xl font-bold text-blue-600">15</div>
-            <div className="text-sm text-gray-600">Cities Reached</div>
+            <div className="text-2xl font-bold text-blue-600">35</div>
+            <div className="text-sm text-gray-600">Communities Reached</div>
           </div>
         </div>
 

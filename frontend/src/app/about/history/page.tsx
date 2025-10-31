@@ -70,7 +70,7 @@ export default function HistoryPage() {
 
   const keyMilestones = [
     {
-      number: "90",
+      number: "30+",
       label: "Churches United",
       description: "Adventist congregations across Dominica"
     },
@@ -85,8 +85,8 @@ export default function HistoryPage() {
       description: "Young people empowered through ANYA"
     },
     {
-      number: "15",
-      label: "Regions Served",
+      number: "50+",
+      label: "Communitues Served",
       description: "Covering every district in Dominica"
     }
   ];

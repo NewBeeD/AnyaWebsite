@@ -3,23 +3,23 @@ import Link from 'next/link';
 
 const leaders = [
   {
-    name: "Pastor John Makoto",
-    role: "Network Director",
-    church: "Grace Community Church",
+    name: "Pastor Sean Sherpard",
+    role: "Youth Director ECC",
+    church: "Roseau SDA Church",
     experience: "15+ years ministry",
     focus: "Church Unity & Outreach"
   },
   {
-    name: "Rev. Maria Santos", 
-    role: "Youth Ministry Lead",
-    church: "Living Waters Church",
+    name: "Ms. Kalisha Aaron", 
+    role: "President",
+    church: "Bense SDA Church",
     experience: "10+ years youth work",
     focus: "Next Generation"
   },
   {
-    name: "Dr. David Chen",
-    role: "Church Planting Director", 
-    church: "New Hope Church",
+    name: "Mrs. Jeannette Languedoc-Barry",
+    role: "Public Relation Officer", 
+    church: "Salsibury SDA Church",
     experience: "12+ years planting",
     focus: "Growth & Development"
   }
