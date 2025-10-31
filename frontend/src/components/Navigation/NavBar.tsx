@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState(null);
+  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
   const router = useRouter();
 
@@ -29,7 +28,7 @@ export default function Navbar() {
     });
   };
 
-  const toggleDropdown = (dropdown, e) => {
+  const toggleDropdown = (dropdown: string, e: React.MouseEvent) => {
     if (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -46,7 +45,7 @@ export default function Navbar() {
     closeAll();
   };
 
-  const handleMobileLinkClick = (href) => {
+  const handleMobileLinkClick = (href: string) => {
     setIsOpen(false);
     router.push(href);
   };
