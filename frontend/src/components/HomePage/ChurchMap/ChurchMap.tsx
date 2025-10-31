@@ -69,7 +69,7 @@ export default function ChurchMapShowcase() {
         {/* CTA Button */}
         <div className="text-center">
           <Link 
-            href="/churches"
+            href="/churches/map"
             className="inline-flex items-center bg-blue-600 text-white font-semibold text-lg px-8! py-4! rounded-lg hover:bg-blue-700 transition-colors duration-300 shadow-lg hover:shadow-xl"
           >
             Find Churches Near You
