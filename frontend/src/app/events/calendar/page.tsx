@@ -2,6 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import useCalendarApi from '@/hooks/Events/UseCalenderApi'
+
 
 interface CalendarEvent {
   id: string;
@@ -13,74 +15,51 @@ interface CalendarEvent {
 }
 
 export default function FullCalendarView() {
+
+
+  // const {data, loading, error } = useStrapiQuery('/events')
+
+  const { events, loading, error } = useCalendarApi(); 
+
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState<CalendarEvent[]>([]);
+
+  // const [events, setEvents] = useState<CalendarEvent[]>([]);
+
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
+
   const [filter, setFilter] = useState<string>('all');
+
   const [isMobile, setIsMobile] = useState(false);
 
   // Check mobile screen size
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
+
     window.addEventListener('resize', checkMobile);
+
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
-  // Sample data - replace with actual API calls
-  useEffect(() => {
-    const mockEvents: CalendarEvent[] = [
-      {
-        id: '1',
-        title: 'Pastors Conference',
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 15),
-        church: 'All Churches',
-        type: 'conference',
-        description: 'Annual gathering of pastors from all 90 churches for fellowship and strategic planning.'
-      },
-      {
-        id: '2',
-        title: 'Youth Leadership Workshop',
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 20),
-        church: 'Central Church',
-        type: 'workshop',
-        description: 'Training session for youth leaders across the island.'
-      },
-      {
-        id: '3',
-        title: 'Unity Prayer Meeting',
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 8),
-        church: 'Northside Fellowship',
-        type: 'prayer',
-        description: 'Joint prayer meeting for church unity and community transformation.'
-      },
-      {
-        id: '4',
-        title: 'Worship Team Training',
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 22),
-        church: 'Coastal Community',
-        type: 'workshop',
-      },
-      {
-        id: '5',
-        title: 'Youth Summer Camp',
-        date: new Date(currentDate.getFullYear(), currentDate.getMonth(), 25),
-        church: 'Mountain View',
-        type: 'youth',
-      },
-    ];
-    setEvents(mockEvents);
-  }, [currentDate]);
+
+
+    // ✅ Replace mock data with real data
+  // useEffect(() => {
+  //   setEvents(apiEvents);
+  // }, [apiEvents]);
 
   const getDaysInMonth = (date: Date) => {
+    
     return new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
   };
 
   const getFirstDayOfMonth = (date: Date) => {
+    
     return new Date(date.getFullYear(), date.getMonth(), 1).getDay();
   };
 
   const navigateMonth = (direction: 'prev' | 'next') => {
+    
     setCurrentDate(prev => {
       const newDate = new Date(prev);
       if (direction === 'prev') {
@@ -93,6 +72,7 @@ export default function FullCalendarView() {
   };
 
   const getEventTypeColor = (type: string) => {
+    
     const colors = {
       conference: 'bg-blue-50 border-blue-200 text-blue-700',
       workshop: 'bg-green-50 border-green-200 text-green-700',
@@ -100,6 +80,7 @@ export default function FullCalendarView() {
       youth: 'bg-orange-50 border-orange-200 text-orange-700',
       other: 'bg-gray-50 border-gray-200 text-gray-700'
     };
+
     return colors[type as keyof typeof colors] || colors.other;
   };
 
@@ -115,7 +96,9 @@ export default function FullCalendarView() {
   };
 
   const getEventsForDay = (day: number) => {
+    
     return events.filter(event => {
+
       const eventDate = new Date(event.date);
       return eventDate.getDate() === day && 
              eventDate.getMonth() === currentDate.getMonth() &&
@@ -144,6 +127,7 @@ export default function FullCalendarView() {
 
   // Mobile calendar view - simplified for small screens
   const MobileCalendarView = () => (
+    
     <div className="space-y-4">
       {Array.from({ length: daysInMonth }, (_, i) => i + 1).map(day => {
         const dayEvents = getEventsForDay(day);
@@ -190,6 +174,8 @@ export default function FullCalendarView() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-4! sm:py-8!">
+
+
       <div className="max-w-7xl mx-auto px-3! sm:px-6! lg:px-8!">
         
         {/* Header Section */}
@@ -263,84 +249,117 @@ export default function FullCalendarView() {
           </div>
         </div>
 
-        {/* Calendar Grid */}
-        {isMobile ? (
-          <MobileCalendarView />
-        ) : (
-          <>
-            {/* Desktop Calendar Grid Card */}
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mx-2! sm:mx-0">
-              {/* Week Days Header */}
-              <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
-                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-                  <div key={day} className="p-3! sm:p-4! text-center font-semibold text-gray-700 text-xs sm:text-sm uppercase tracking-wide">
-                    {day}
-                  </div>
-                ))}
-              </div>
 
-              {/* Calendar Days Grid */}
-              <div className="grid grid-cols-7 gap-px! bg-gray-200">
-                {days.map((day, index) => (
-                  <div
-                    key={index}
-                    className="bg-white min-h-[120px] sm:min-h-[140px] p-2! sm:p-3! hover:bg-gray-50 transition-colors duration-150"
-                  >
-                    {day && (
-                      <>
-                        {/* Day Number */}
-                        <div className="flex justify-between items-start mb-2!">
-                          <span className={`text-sm font-medium ${
-                            new Date().getDate() === day && 
-                            new Date().getMonth() === currentDate.getMonth() && 
-                            new Date().getFullYear() === currentDate.getFullYear()
-                              ? 'bg-blue-600 text-white rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-xs sm:text-sm'
-                              : 'text-gray-900'
-                          }`}>
-                            {day}
-                          </span>
-                        </div>
-                        
-                        {/* Events for the day */}
-                        <div className="space-y-1! sm:space-y-2!">
-                          {getEventsForDay(day).map(event => (
-                            <button
-                              key={event.id}
-                              onClick={() => setSelectedEvent(event)}
-                              className={`w-full text-left text-xs p-1! sm:p-2! rounded-lg border-l-4 ${getEventTypeColor(event.type)} hover:shadow-sm transition-all duration-200 text-start`}
-                            >
-                              <div className="font-medium truncate text-xs sm:text-sm">{event.title}</div>
-                              <div className="text-xs text-gray-500 mt-0.5! truncate">{event.church}</div>
-                            </button>
-                          ))}
-                        </div>
-                      </>
-                    )}
-                  </div>
-                ))}
+        {/* Loading State */}
+          {loading && (
+            <div className="animate-pulse space-y-4!">
+              <div className="h-4 bg-gray-200 rounded w-1/4 mx-auto! mb-6!"></div>
+              <div className="space-y-3!">
+                <div className="h-6 bg-gray-200 rounded w-4/5 mx-auto"></div>
+                <div className="h-6 bg-gray-200 rounded w-3/4 mx-auto"></div>
+                <div className="h-6 bg-gray-200 rounded w-5/6 mx-auto"></div>
+              </div>
+              <div className="h-4 bg-gray-200 rounded w-1/3 mx-auto! mt-6!"></div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && !loading && (
+            <div className="mb-6! p-4! bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="flex items-center justify-center">
+                <div className="text-yellow-600 mr-2!">⚠️</div>
+                <p className="text-yellow-800 text-sm">{error}</p>
               </div>
             </div>
+          )}
 
-            {/* Event Type Legend */}
-            <div className="mt-6! bg-white rounded-lg shadow-sm border border-gray-200 p-4! sm:p-6! mx-2! sm:mx-0">
-              <h3 className="text-lg font-semibold text-gray-900 mb-3! sm:mb-4!">Event Types</h3>
-              <div className="flex flex-wrap gap-3! sm:gap-4!">
-                {Object.entries({
-                  conference: 'Conferences',
-                  workshop: 'Workshops',
-                  prayer: 'Prayer Meetings',
-                  youth: 'Youth Events',
-                  other: 'Other Events'
-                }).map(([type, label]) => (
-                  <div key={type} className="flex items-center gap-x-2!">
-                    <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded ${getEventTypeBadge(type)}`} />
-                    <span className="text-xs sm:text-sm text-gray-700">{label}</span>
+
+
+          {!loading && events && (
+
+            <div>
+
+              {/* Calendar Grid */}
+              {isMobile ? (
+                <MobileCalendarView />
+              ) : (
+                <>
+                  {/* Desktop Calendar Grid Card */}
+                  <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden mx-2! sm:mx-0">
+                    {/* Week Days Header */}
+                    <div className="grid grid-cols-7 bg-gray-50 border-b border-gray-200">
+                      {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+                        <div key={day} className="p-3! sm:p-4! text-center font-semibold text-gray-700 text-xs sm:text-sm uppercase tracking-wide">
+                          {day}
+                        </div>
+                      ))}
+                    </div>
+      
+                    {/* Calendar Days Grid */}
+                    <div className="grid grid-cols-7 gap-px! bg-gray-200">
+                      {days.map((day, index) => (
+                        <div
+                          key={index}
+                          className="bg-white min-h-[120px] sm:min-h-[140px] p-2! sm:p-3! hover:bg-gray-50 transition-colors duration-150"
+                        >
+                          {day && (
+                            <>
+                              {/* Day Number */}
+                              <div className="flex justify-between items-start mb-2!">
+                                <span className={`text-sm font-medium ${
+                                  new Date().getDate() === day && 
+                                  new Date().getMonth() === currentDate.getMonth() && 
+                                  new Date().getFullYear() === currentDate.getFullYear()
+                                    ? 'bg-blue-600 text-white rounded-full w-6 h-6 sm:w-7 sm:h-7 flex items-center justify-center text-xs sm:text-sm'
+                                    : 'text-gray-900'
+                                }`}>
+                                  {day}
+                                </span>
+                              </div>
+                              
+                              {/* Events for the day */}
+                              <div className="space-y-1! sm:space-y-2!">
+                                {getEventsForDay(day).map(event => (
+                                  <button
+                                    key={event.id}
+                                    onClick={() => setSelectedEvent(event)}
+                                    className={`w-full text-left text-xs p-1! sm:p-2! rounded-lg border-l-4 ${getEventTypeColor(event.type)} hover:shadow-sm transition-all duration-200 text-start`}
+                                  >
+                                    <div className="font-medium truncate text-xs sm:text-sm">{event.title}</div>
+                                    <div className="text-xs text-gray-500 mt-0.5! truncate">{event.church}</div>
+                                  </button>
+                                ))}
+                              </div>
+                            </>
+                          )}
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
+      
+                  {/* Event Type Legend */}
+                  <div className="mt-6! bg-white rounded-lg shadow-sm border border-gray-200 p-4! sm:p-6! mx-2! sm:mx-0">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3! sm:mb-4!">Event Types</h3>
+                    <div className="flex flex-wrap gap-3! sm:gap-4!">
+                      {Object.entries({
+                        conference: 'Conferences',
+                        workshop: 'Workshops',
+                        prayer: 'Prayer Meetings',
+                        youth: 'Youth Events',
+                        other: 'Other Events'
+                      }).map(([type, label]) => (
+                        <div key={type} className="flex items-center gap-x-2!">
+                          <div className={`w-3 h-3 sm:w-4 sm:h-4 rounded ${getEventTypeBadge(type)}`} />
+                          <span className="text-xs sm:text-sm text-gray-700">{label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
-          </>
-        )}
+          )}
+
       </div>
 
       {/* Event Detail Modal */}
@@ -367,8 +386,8 @@ export default function FullCalendarView() {
                 </button>
               </div>
               
-              <div className="space-y-4!">
-                <div className="flex items-start space-x-3!">
+              <div className="space-y-4! pb-2!">
+                <div className="flex items-start gap-x-3!">
                   <svg className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
@@ -385,7 +404,7 @@ export default function FullCalendarView() {
                   </div>
                 </div>
                 
-                <div className="flex items-start space-x-3!">
+                <div className="flex items-start gap-x-3!">
                   <svg className="w-5 h-5 text-gray-400 mt-0.5! flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
@@ -396,13 +415,13 @@ export default function FullCalendarView() {
                 </div>
 
                 {selectedEvent.description && (
-                  <div className="flex items-start space-x-3!">
-                    <svg className="w-5 h-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="flex items-start gap-x-3!">
+                    <svg className="w-5 h-5 text-gray-400 mt-0.5! flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                     <div>
                       <p className="text-sm font-medium text-gray-900">Description</p>
-                      <p className="text-sm text-gray-600">{selectedEvent.description}</p>
+                      <p className="text-sm text-gray-600 py-1!">{selectedEvent.description}</p>
                     </div>
                   </div>
                 )}

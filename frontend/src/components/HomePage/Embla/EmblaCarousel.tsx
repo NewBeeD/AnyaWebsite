@@ -3,6 +3,7 @@ import React from 'react'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image' // Import Image component
+import Link from 'next/link';
 
 const EmblaCarousel = () => {
   const [emblaRef] = useEmblaCarousel({ loop: false }, [Autoplay()])
@@ -65,14 +66,24 @@ const EmblaCarousel = () => {
         
 
         <div className="flex flex-row-reverse gap-4 mt-12! sm:mt-10!">
-          
-          <button type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-extrabold rounded-lg text-sm px-2.5! py-2.5! text-center me-2 mb-2">
-            View Events
-          </button>
 
-          <button type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-extrabold rounded-lg text-sm px-2.5! py-2.5! text-center me-2 mb-2">
-            Find a Church
-          </button>
+          <Link href={`/events/calendar`}>
+            <button type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-extrabold rounded-lg text-sm px-2.5! py-2.5! text-center me-2 mb-2">
+              View Events
+            </button>
+          
+          </Link>
+
+
+          <Link href={`/churches/list`}>
+          
+            <button type="button" className="text-white bg-gradient-to-r from-green-400 via-green-500 to-green-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-green-300 dark:focus:ring-green-800 font-extrabold rounded-lg text-sm px-2.5! py-2.5! text-center me-2 mb-2">
+              Find a Church
+            </button>
+          
+          </Link>
+          
+
         </div>
       </div>
     </div>
