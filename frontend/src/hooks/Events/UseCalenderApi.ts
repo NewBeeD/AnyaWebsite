@@ -1,46 +1,3 @@
-
-
-// import { useStrapiQuery } from '@/hooks/Events/UseEventsApi';
-
-// interface CalendarEvent {
-//   id: string;
-//   title: string;
-//   date: Date;
-//   church: string;
-//   type: 'conference' | 'workshop' | 'prayer' | 'youth' | 'other';
-//   description?: string;
-// }
-
-// /**
-//  * Custom hook that fetches events and returns an array of CalendarEvent objects
-//  */
-// export default function useFullCalendarViewApi(): CalendarEvent[] | undefined {
-//   const { data, loading, error } = useStrapiQuery('/events');
-
-//   if (loading || error || !data) return undefined;
-
-//   return modifyData(data);
-// }
-
-// /**
-//  * Helper function that transforms the raw API data into CalendarEvent[] format
-//  */
-// function modifyData(info: any): CalendarEvent[] {
-//   if (!info?.data) return [];
-
-//   return info.data.map((item: any) => ({
-//     id: item.id,
-//     title: item.Title,
-//     date: item.Date,
-//     church: item.Church,
-//     type: (item.EventCategory?.toLowerCase() as CalendarEvent['type']) || 'other',
-//     description: item.Description?.[0]?.children?.[0]?.text || '',
-//   }));
-// }
-
-
-
-
 'use client';
 
 import { useStrapiQuery } from '@/hooks/Events/UseEventsApi';
@@ -63,7 +20,7 @@ interface CalendarApiResult {
 export default function useCalendarApi(): CalendarApiResult {
   const { data, loading, error } = useStrapiQuery('/events');
 
-    
+  console.log(data)
 
   if (loading || error || !data) {
     return { events: [], loading, error };

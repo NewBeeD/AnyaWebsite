@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import UseYouthApi from '@/hooks/Events/UseYouthApi'
 
 interface YouthEvent {
   id: string;
@@ -18,87 +19,15 @@ interface YouthEvent {
 }
 
 export default function YouthEvents() {
-  const [events, setEvents] = useState<YouthEvent[]>([]);
+
+  const {events, loading, error} = UseYouthApi()
+
+  // const [events, setEvents] = useState<YouthEvent[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [selectedEvent, setSelectedEvent] = useState<YouthEvent | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
-  // Sample youth events data
-  useEffect(() => {
-    const mockEvents: YouthEvent[] = [
-      {
-        id: '1',
-        title: 'Summer Youth Camp 2024',
-        date: new Date(2024, 6, 15),
-        location: 'Lakeview Campground',
-        church: 'All Churches',
-        type: 'camp',
-        description: 'An amazing 5-day summer camp experience for youth ages 13-18. Featuring worship, teaching, outdoor activities, and lifelong friendships.',
-        ageGroup: '13-18',
-        registrationRequired: true,
-        registrationLink: '#register'
-      },
-      {
-        id: '2',
-        title: 'Youth Leadership Workshop',
-        date: new Date(2024, 5, 22),
-        location: 'Central Church Hall',
-        church: 'Central Church',
-        type: 'workshop',
-        description: 'Develop your leadership skills and learn how to serve in your local church youth ministry.',
-        ageGroup: '16-25',
-        registrationRequired: false
-      },
-      {
-        id: '3',
-        title: 'Beach Retreat Weekend',
-        date: new Date(2024, 7, 10),
-        location: 'Sunset Beach',
-        church: 'Coastal Community',
-        type: 'retreat',
-        description: 'A relaxing weekend retreat by the beach with worship, Bible study, and beach games.',
-        ageGroup: '15-20',
-        registrationRequired: true,
-        registrationLink: '#register'
-      },
-      {
-        id: '4',
-        title: 'Youth Worship Night',
-        date: new Date(2024, 5, 8),
-        location: 'Northside Fellowship',
-        church: 'Northside Fellowship',
-        type: 'social',
-        description: 'An evening of powerful worship and fellowship for youth across the island.',
-        ageGroup: '12-18',
-        registrationRequired: false
-      },
-      {
-        id: '5',
-        title: 'Mission Trip Planning',
-        date: new Date(2024, 4, 25),
-        location: 'Mountain View Church',
-        church: 'Mountain View',
-        type: 'mission',
-        description: 'Information session for the upcoming summer mission trip to neighboring communities.',
-        ageGroup: '16-25',
-        registrationRequired: true,
-        registrationLink: '#register'
-      },
-      {
-        id: '6',
-        title: 'Youth Conference 2024',
-        date: new Date(2024, 8, 5),
-        location: 'City Convention Center',
-        church: 'All Churches',
-        type: 'conference',
-        description: 'Annual island-wide youth conference with guest speakers, workshops, and networking.',
-        ageGroup: '13-25',
-        registrationRequired: true,
-        registrationLink: '#register'
-      }
-    ];
-    setEvents(mockEvents);
-  }, []);
+
 
   const getEventTypeColor = (type: string) => {
     const colors = {

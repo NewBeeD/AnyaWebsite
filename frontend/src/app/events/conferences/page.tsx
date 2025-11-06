@@ -2,7 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-
+import UseConfernceApi from '@/hooks/Events/UseConferenceApi'
+ 
 interface Conference {
   id: string;
   title: string;
@@ -23,120 +24,18 @@ interface Conference {
 }
 
 export default function UpcomingConferences() {
-  const [conferences, setConferences] = useState<Conference[]>([]);
+
+
+  const {events: conferences, loading, error} = UseConfernceApi()
+  
+  
+  // const [conferences, setConferences] = useState<Conference[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [selectedConference, setSelectedConference] = useState<Conference | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'fee'>('date');
 
-  // Sample conferences data
-  useEffect(() => {
-    const mockConferences: Conference[] = [
-      {
-        id: '1',
-        title: 'Annual Pastors & Leaders Conference 2024',
-        date: new Date(2024, 7, 15),
-        endDate: new Date(2024, 7, 17),
-        location: 'Kingston',
-        venue: 'National Convention Center',
-        hostChurch: 'All 90 Churches',
-        type: 'leadership',
-        description: 'A powerful gathering of pastors and church leaders from across the island for strategic planning, fellowship, and spiritual renewal. Featuring renowned speakers and workshops on church growth and leadership development.',
-        speakers: ['Dr. Michael Thompson', 'Pastor Sarah Johnson', 'Bishop David Chen'],
-        registrationFee: 150,
-        registrationLink: '#register',
-        capacity: 500,
-        registeredCount: 347,
-        tags: ['Leadership', 'Ministry', 'Strategy']
-      },
-      {
-        id: '2',
-        title: 'Island Worship Conference',
-        date: new Date(2024, 8, 5),
-        endDate: new Date(2024, 8, 7),
-        location: 'Montego Bay',
-        venue: 'Grace Cathedral',
-        hostChurch: 'Coastal Community Church',
-        type: 'worship',
-        description: 'Transformative worship experience for worship teams, musicians, and anyone passionate about worship ministry. Deepen your understanding of worship and enhance your technical skills.',
-        speakers: ['Worship Leader Maria Garcia', 'Producer James Wilson', 'The Harmony Collective'],
-        registrationFee: 75,
-        registrationLink: '#register',
-        capacity: 300,
-        registeredCount: 289,
-        tags: ['Worship', 'Music', 'Arts']
-      },
-      {
-        id: '3',
-        title: 'NextGen Youth Conference',
-        date: new Date(2024, 9, 12),
-        endDate: new Date(2024, 9, 14),
-        location: 'Ocho Rios',
-        venue: 'Beachside Resort & Conference Center',
-        hostChurch: 'Youth Ministry Alliance',
-        type: 'youth',
-        description: 'Dynamic youth conference focused on empowering the next generation of Christian leaders. High-energy worship, relevant teaching, and life-changing encounters with God.',
-        speakers: ['Youth Pastor Mark Davis', 'Evangelist Rachel Kim', 'The Awakening Band'],
-        registrationFee: 100,
-        registrationLink: '#register',
-        capacity: 800,
-        registeredCount: 612,
-        tags: ['Youth', 'NextGen', 'Empowerment']
-      },
-      {
-        id: '4',
-        title: 'Family & Marriage Enrichment Conference',
-        date: new Date(2024, 10, 3),
-        endDate: new Date(2024, 10, 4),
-        location: 'Mandeville',
-        venue: 'Mountain View Conference Center',
-        hostChurch: 'Family Life Ministries',
-        type: 'family',
-        description: 'Strengthen family bonds and enrich marriages through biblical principles and practical workshops. Couples and families will leave equipped and encouraged.',
-        speakers: ['Dr. Robert & Linda Martinez', 'Family Counselor Sarah Brown', 'Pastor John Williams'],
-        registrationFee: 120,
-        registrationLink: '#register',
-        capacity: 250,
-        registeredCount: 198,
-        tags: ['Family', 'Marriage', 'Relationships']
-      },
-      {
-        id: '5',
-        title: 'Evangelism & Outreach Summit',
-        date: new Date(2024, 6, 20),
-        endDate: new Date(2024, 6, 21),
-        location: 'Spanish Town',
-        venue: 'Community Outreach Center',
-        hostChurch: 'Evangelism Task Force',
-        type: 'evangelism',
-        description: 'Equip yourself with effective evangelism strategies and outreach methods. Learn how to share the Gospel in your community with confidence and compassion.',
-        speakers: ['Evangelist Paul Richardson', 'Mission Director Lisa Wang', 'Community Leader Thomas Reed'],
-        registrationFee: 60,
-        registrationLink: '#register',
-        capacity: 400,
-        registeredCount: 325,
-        tags: ['Evangelism', 'Outreach', 'Missions']
-      },
-      {
-        id: '6',
-        title: 'Bible Teaching Symposium',
-        date: new Date(2024, 11, 1),
-        endDate: new Date(2024, 11, 3),
-        location: 'Portmore',
-        venue: 'Theological Seminary Campus',
-        hostChurch: 'Bible Teaching Fellowship',
-        type: 'teaching',
-        description: 'Deep dive into Scripture with renowned Bible teachers and theologians. Enhance your understanding of God\'s Word and improve your teaching skills.',
-        speakers: ['Dr. Elizabeth Brown', 'Theologian Samuel Peters', 'Bible Teacher Rebecca Lewis'],
-        registrationFee: 90,
-        registrationLink: '#register',
-        capacity: 350,
-        registeredCount: 275,
-        tags: ['Bible', 'Teaching', 'Theology']
-      }
-    ];
-    setConferences(mockConferences);
-  }, []);
+
 
   const getConferenceTypeColor = (type: string) => {
     const colors = {
@@ -438,7 +337,7 @@ export default function UpcomingConferences() {
         </div>
 
         {/* Conferences Grid/List */}
-        {filteredAndSortedConferences.length === 0 ? (
+        {filteredAndSortedConferences.length === 0 && loading ? (
           <div className="bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-8! text-center! mx-2! sm:mx-0!">
             <svg className="w-12! h-12! text-gray-400! mx-auto! mb-4!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />

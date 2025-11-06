@@ -121,7 +121,7 @@ export default function Navbar() {
                   {item.dropdown ? (
                     <button
                       onClick={(e) => toggleDropdown(item.name, e)}
-                      className="px-3! py-2 text-gray-700 hover:text-blue-600
+                      className="px-3! py-2! text-gray-700 hover:text-blue-600
                        font-medium transition-colors duration-200 flex items-center gap-x-1!"
                     >
                       {item.name}

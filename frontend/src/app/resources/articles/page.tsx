@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import useArticleApi from '@/hooks/Resources/useArticleApi'
 
 interface Article {
   id: string;
@@ -21,201 +22,204 @@ interface Article {
   featured: boolean;
   image?: string;
   scripture?: string;
+  slug: string;
 }
 
 export default function ArticlesAndBlog() {
-  const [articles, setArticles] = useState<Article[]>([]);
+
+  const { events: articles, loading, error } = useArticleApi()
+  // const [articles, setArticles] = useState<Article[]>([]);
   const [filter, setFilter] = useState<string>('all');
   const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
   // Sample articles data
-  useEffect(() => {
-    const mockArticles: Article[] = [
-      {
-        id: '1',
-        title: 'Understanding the Sabbath: More Than Just a Day of Rest',
-        author: 'Pastor Michael Henderson',
-        authorRole: 'Senior Pastor',
-        church: 'Roseau Seventh-day Adventist Church',
-        date: new Date(2024, 6, 15),
-        category: 'doctrine',
-        description: 'A deep dive into the biblical significance of the Sabbath and its practical application in our modern lives. Discover the peace and restoration that comes from honoring God\'s holy day.',
-        content: 'Full article content would go here... Exploring the Sabbath from creation to redemption and its relevance for today\'s Christian.',
-        readingTime: '8 min read',
-        tags: ['Sabbath', 'Rest', 'Worship', 'Creation', 'Adventist'],
-        viewCount: 324,
-        likeCount: 156,
-        commentCount: 23,
-        featured: true,
-        scripture: 'Genesis 2:1-3'
-      },
-      {
-        id: '2',
-        title: 'Plant-Based Living: A Biblical Perspective on Health',
-        author: 'Dr. Sarah Laurent',
-        authorRole: 'Health Ministries Director',
-        church: 'Portsmouth Seventh-day Adventist Church',
-        date: new Date(2024, 6, 12),
-        category: 'health',
-        description: 'Exploring the connection between our dietary choices and spiritual well-being. Practical tips for transitioning to a plant-based lifestyle in the Caribbean context.',
-        content: 'Full article content would go here... Discussing the health message and Daniel\'s example.',
-        readingTime: '10 min read',
-        tags: ['Health', 'Nutrition', 'Plant-Based', 'Temperance', 'Wellness'],
-        viewCount: 278,
-        likeCount: 134,
-        commentCount: 18,
-        featured: true,
-        scripture: 'Daniel 1:8-16'
-      },
-      {
-        id: '3',
-        title: 'Raising Adventist Children in a Digital Age',
-        author: 'Elder Robert Green',
-        authorRole: 'Family Ministries Leader',
-        church: 'Marigot Seventh-day Adventist Church',
-        date: new Date(2024, 6, 8),
-        category: 'family',
-        description: 'Practical strategies for nurturing faith in our children while navigating the challenges of technology and social media in today\'s world.',
-        content: 'Full article content would go here... Focus on family worship and digital boundaries.',
-        readingTime: '12 min read',
-        tags: ['Family', 'Parenting', 'Technology', 'Youth', 'Discipleship'],
-        viewCount: 189,
-        likeCount: 98,
-        commentCount: 15,
-        featured: false,
-        scripture: 'Proverbs 22:6'
-      },
-      {
-        id: '4',
-        title: 'The Blessed Hope: Living in Expectation of Christ\'s Return',
-        author: 'Evangelist Maria Joseph',
-        authorRole: 'Evangelism Coordinator',
-        church: 'Canefield Seventh-day Adventist Church',
-        date: new Date(2024, 6, 5),
-        category: 'prophecy',
-        description: 'How the blessed hope of Christ\'s soon return should shape our daily lives, priorities, and mission as Seventh-day Adventists.',
-        content: 'Full article content would go here... Exploring the Second Coming and its practical implications.',
-        readingTime: '14 min read',
-        tags: ['Second Coming', 'Prophecy', 'Hope', 'Eschatology', 'Mission'],
-        viewCount: 267,
-        likeCount: 145,
-        commentCount: 22,
-        featured: true,
-        scripture: 'Titus 2:13'
-      },
-      {
-        id: '5',
-        title: 'From Hurricane to Hope: A Dominican Testimony',
-        author: 'Sister Linda Frederick',
-        authorRole: 'Church Member',
-        church: 'Grand Bay Seventh-day Adventist Church',
-        date: new Date(2024, 6, 1),
-        category: 'testimony',
-        description: 'A powerful personal testimony of faith and restoration after Hurricane Maria, and how God turned devastation into opportunity for ministry.',
-        content: 'Full testimony content would go here... Personal story of recovery and faith.',
-        readingTime: '6 min read',
-        tags: ['Testimony', 'Hurricane', 'Faith', 'Recovery', 'Dominica'],
-        viewCount: 312,
-        likeCount: 178,
-        commentCount: 31,
-        featured: false,
-        scripture: 'Romans 8:28'
-      },
-      {
-        id: '6',
-        title: 'Youth Ministry in the 21st Century: Reaching the Next Generation',
-        author: 'Deacon Thomas Williams',
-        authorRole: 'Youth Leader',
-        church: 'St. Joseph Seventh-day Adventist Church',
-        date: new Date(2024, 5, 28),
-        category: 'youth',
-        description: 'Innovative approaches to youth ministry that connect with young people while staying true to Adventist principles and biblical truth.',
-        content: 'Full article content would go here... Discussing Pathfinders, AY, and modern youth outreach.',
-        readingTime: '11 min read',
-        tags: ['Youth', 'Ministry', 'Next Generation', 'Pathfinders', 'Innovation'],
-        viewCount: 156,
-        likeCount: 89,
-        commentCount: 12,
-        featured: false,
-        scripture: '1 Timothy 4:12'
-      },
-      {
-        id: '7',
-        title: 'Community Service as Evangelism: The Adventist Approach',
-        author: 'Pastor David Timothy',
-        authorRole: 'ACS Director',
-        church: 'Salisbury Seventh-day Adventist Church',
-        date: new Date(2024, 5, 25),
-        category: 'community',
-        description: 'How Adventist Community Services provides opportunities to share God\'s love through practical ministry in our Dominican communities.',
-        content: 'Full article content would go here... Focus on service and witness.',
-        readingTime: '9 min read',
-        tags: ['Community Service', 'Evangelism', 'Outreach', 'ACS', 'Mission'],
-        viewCount: 198,
-        likeCount: 112,
-        commentCount: 17,
-        featured: false,
-        scripture: 'Matthew 5:16'
-      },
-      {
-        id: '8',
-        title: 'The Health Message: Ellen White\'s Timeless Counsel',
-        author: 'Dr. James Baptiste',
-        authorRole: 'Medical Doctor',
-        church: 'Roseau Seventh-day Adventist Church',
-        date: new Date(2024, 5, 20),
-        category: 'health',
-        description: 'Examining the relevance of Ellen White\'s health principles in modern medicine and their application to Caribbean lifestyle and health challenges.',
-        content: 'Full article content would go here... Scientific and spiritual perspectives.',
-        readingTime: '15 min read',
-        tags: ['Health Message', 'Ellen White', 'Prevention', 'Wholistic Health', 'Caribbean'],
-        viewCount: 234,
-        likeCount: 134,
-        commentCount: 19,
-        featured: true,
-        scripture: '3 John 1:2'
-      },
-      {
-        id: '9',
-        title: 'Financial Stewardship: Managing God\'s Resources',
-        author: 'Elder Mark Paul',
-        authorRole: 'Stewardship Director',
-        church: 'Mahaut Seventh-day Adventist Church',
-        date: new Date(2024, 5, 18),
-        category: 'lifestyle',
-        description: 'Biblical principles of financial management, tithing, and stewardship for Adventist families in the Dominican economic context.',
-        content: 'Full article content would go here... Practical financial guidance.',
-        readingTime: '13 min read',
-        tags: ['Stewardship', 'Finance', 'Tithing', 'Budgeting', 'Generosity'],
-        viewCount: 167,
-        likeCount: 98,
-        commentCount: 14,
-        featured: false,
-        scripture: 'Malachi 3:10'
-      },
-      {
-        id: '10',
-        title: 'The Sanctuary Doctrine: Understanding Christ\'s Ministry',
-        author: 'Pastor Stephen Bernard',
-        authorRole: 'Theology Teacher',
-        church: 'Dominica Seventh-day Adventist School',
-        date: new Date(2024, 5, 15),
-        category: 'doctrine',
-        description: 'A clear explanation of the Adventist understanding of the heavenly sanctuary and Christ\'s ongoing ministry as our High Priest.',
-        content: 'Full article content would go here... Deep theological exploration.',
-        readingTime: '16 min read',
-        tags: ['Sanctuary', 'Doctrine', 'High Priest', 'Atonement', 'Theology'],
-        viewCount: 189,
-        likeCount: 112,
-        commentCount: 21,
-        featured: false,
-        scripture: 'Hebrews 8:1-2'
-      }
-    ];
-    setArticles(mockArticles);
-  }, []);
+  // useEffect(() => {
+  //   const mockArticles: Article[] = [
+  //     {
+  //       id: '1',
+  //       title: 'Understanding the Sabbath: More Than Just a Day of Rest',
+  //       author: 'Pastor Michael Henderson',
+  //       authorRole: 'Senior Pastor',
+  //       church: 'Roseau Seventh-day Adventist Church',
+  //       date: new Date(2024, 6, 15),
+  //       category: 'doctrine',
+  //       description: 'A deep dive into the biblical significance of the Sabbath and its practical application in our modern lives. Discover the peace and restoration that comes from honoring God\'s holy day.',
+  //       content: 'Full article content would go here... Exploring the Sabbath from creation to redemption and its relevance for today\'s Christian.',
+  //       readingTime: '8 min read',
+  //       tags: ['Sabbath', 'Rest', 'Worship', 'Creation', 'Adventist'],
+  //       viewCount: 324,
+  //       likeCount: 156,
+  //       commentCount: 23,
+  //       featured: true,
+  //       scripture: 'Genesis 2:1-3'
+  //     },
+  //     {
+  //       id: '2',
+  //       title: 'Plant-Based Living: A Biblical Perspective on Health',
+  //       author: 'Dr. Sarah Laurent',
+  //       authorRole: 'Health Ministries Director',
+  //       church: 'Portsmouth Seventh-day Adventist Church',
+  //       date: new Date(2024, 6, 12),
+  //       category: 'health',
+  //       description: 'Exploring the connection between our dietary choices and spiritual well-being. Practical tips for transitioning to a plant-based lifestyle in the Caribbean context.',
+  //       content: 'Full article content would go here... Discussing the health message and Daniel\'s example.',
+  //       readingTime: '10 min read',
+  //       tags: ['Health', 'Nutrition', 'Plant-Based', 'Temperance', 'Wellness'],
+  //       viewCount: 278,
+  //       likeCount: 134,
+  //       commentCount: 18,
+  //       featured: true,
+  //       scripture: 'Daniel 1:8-16'
+  //     },
+  //     {
+  //       id: '3',
+  //       title: 'Raising Adventist Children in a Digital Age',
+  //       author: 'Elder Robert Green',
+  //       authorRole: 'Family Ministries Leader',
+  //       church: 'Marigot Seventh-day Adventist Church',
+  //       date: new Date(2024, 6, 8),
+  //       category: 'family',
+  //       description: 'Practical strategies for nurturing faith in our children while navigating the challenges of technology and social media in today\'s world.',
+  //       content: 'Full article content would go here... Focus on family worship and digital boundaries.',
+  //       readingTime: '12 min read',
+  //       tags: ['Family', 'Parenting', 'Technology', 'Youth', 'Discipleship'],
+  //       viewCount: 189,
+  //       likeCount: 98,
+  //       commentCount: 15,
+  //       featured: false,
+  //       scripture: 'Proverbs 22:6'
+  //     },
+  //     {
+  //       id: '4',
+  //       title: 'The Blessed Hope: Living in Expectation of Christ\'s Return',
+  //       author: 'Evangelist Maria Joseph',
+  //       authorRole: 'Evangelism Coordinator',
+  //       church: 'Canefield Seventh-day Adventist Church',
+  //       date: new Date(2024, 6, 5),
+  //       category: 'prophecy',
+  //       description: 'How the blessed hope of Christ\'s soon return should shape our daily lives, priorities, and mission as Seventh-day Adventists.',
+  //       content: 'Full article content would go here... Exploring the Second Coming and its practical implications.',
+  //       readingTime: '14 min read',
+  //       tags: ['Second Coming', 'Prophecy', 'Hope', 'Eschatology', 'Mission'],
+  //       viewCount: 267,
+  //       likeCount: 145,
+  //       commentCount: 22,
+  //       featured: true,
+  //       scripture: 'Titus 2:13'
+  //     },
+  //     {
+  //       id: '5',
+  //       title: 'From Hurricane to Hope: A Dominican Testimony',
+  //       author: 'Sister Linda Frederick',
+  //       authorRole: 'Church Member',
+  //       church: 'Grand Bay Seventh-day Adventist Church',
+  //       date: new Date(2024, 6, 1),
+  //       category: 'testimony',
+  //       description: 'A powerful personal testimony of faith and restoration after Hurricane Maria, and how God turned devastation into opportunity for ministry.',
+  //       content: 'Full testimony content would go here... Personal story of recovery and faith.',
+  //       readingTime: '6 min read',
+  //       tags: ['Testimony', 'Hurricane', 'Faith', 'Recovery', 'Dominica'],
+  //       viewCount: 312,
+  //       likeCount: 178,
+  //       commentCount: 31,
+  //       featured: false,
+  //       scripture: 'Romans 8:28'
+  //     },
+  //     {
+  //       id: '6',
+  //       title: 'Youth Ministry in the 21st Century: Reaching the Next Generation',
+  //       author: 'Deacon Thomas Williams',
+  //       authorRole: 'Youth Leader',
+  //       church: 'St. Joseph Seventh-day Adventist Church',
+  //       date: new Date(2024, 5, 28),
+  //       category: 'youth',
+  //       description: 'Innovative approaches to youth ministry that connect with young people while staying true to Adventist principles and biblical truth.',
+  //       content: 'Full article content would go here... Discussing Pathfinders, AY, and modern youth outreach.',
+  //       readingTime: '11 min read',
+  //       tags: ['Youth', 'Ministry', 'Next Generation', 'Pathfinders', 'Innovation'],
+  //       viewCount: 156,
+  //       likeCount: 89,
+  //       commentCount: 12,
+  //       featured: false,
+  //       scripture: '1 Timothy 4:12'
+  //     },
+  //     {
+  //       id: '7',
+  //       title: 'Community Service as Evangelism: The Adventist Approach',
+  //       author: 'Pastor David Timothy',
+  //       authorRole: 'ACS Director',
+  //       church: 'Salisbury Seventh-day Adventist Church',
+  //       date: new Date(2024, 5, 25),
+  //       category: 'community',
+  //       description: 'How Adventist Community Services provides opportunities to share God\'s love through practical ministry in our Dominican communities.',
+  //       content: 'Full article content would go here... Focus on service and witness.',
+  //       readingTime: '9 min read',
+  //       tags: ['Community Service', 'Evangelism', 'Outreach', 'ACS', 'Mission'],
+  //       viewCount: 198,
+  //       likeCount: 112,
+  //       commentCount: 17,
+  //       featured: false,
+  //       scripture: 'Matthew 5:16'
+  //     },
+  //     {
+  //       id: '8',
+  //       title: 'The Health Message: Ellen White\'s Timeless Counsel',
+  //       author: 'Dr. James Baptiste',
+  //       authorRole: 'Medical Doctor',
+  //       church: 'Roseau Seventh-day Adventist Church',
+  //       date: new Date(2024, 5, 20),
+  //       category: 'health',
+  //       description: 'Examining the relevance of Ellen White\'s health principles in modern medicine and their application to Caribbean lifestyle and health challenges.',
+  //       content: 'Full article content would go here... Scientific and spiritual perspectives.',
+  //       readingTime: '15 min read',
+  //       tags: ['Health Message', 'Ellen White', 'Prevention', 'Wholistic Health', 'Caribbean'],
+  //       viewCount: 234,
+  //       likeCount: 134,
+  //       commentCount: 19,
+  //       featured: true,
+  //       scripture: '3 John 1:2'
+  //     },
+  //     {
+  //       id: '9',
+  //       title: 'Financial Stewardship: Managing God\'s Resources',
+  //       author: 'Elder Mark Paul',
+  //       authorRole: 'Stewardship Director',
+  //       church: 'Mahaut Seventh-day Adventist Church',
+  //       date: new Date(2024, 5, 18),
+  //       category: 'lifestyle',
+  //       description: 'Biblical principles of financial management, tithing, and stewardship for Adventist families in the Dominican economic context.',
+  //       content: 'Full article content would go here... Practical financial guidance.',
+  //       readingTime: '13 min read',
+  //       tags: ['Stewardship', 'Finance', 'Tithing', 'Budgeting', 'Generosity'],
+  //       viewCount: 167,
+  //       likeCount: 98,
+  //       commentCount: 14,
+  //       featured: false,
+  //       scripture: 'Malachi 3:10'
+  //     },
+  //     {
+  //       id: '10',
+  //       title: 'The Sanctuary Doctrine: Understanding Christ\'s Ministry',
+  //       author: 'Pastor Stephen Bernard',
+  //       authorRole: 'Theology Teacher',
+  //       church: 'Dominica Seventh-day Adventist School',
+  //       date: new Date(2024, 5, 15),
+  //       category: 'doctrine',
+  //       description: 'A clear explanation of the Adventist understanding of the heavenly sanctuary and Christ\'s ongoing ministry as our High Priest.',
+  //       content: 'Full article content would go here... Deep theological exploration.',
+  //       readingTime: '16 min read',
+  //       tags: ['Sanctuary', 'Doctrine', 'High Priest', 'Atonement', 'Theology'],
+  //       viewCount: 189,
+  //       likeCount: 112,
+  //       commentCount: 21,
+  //       featured: false,
+  //       scripture: 'Hebrews 8:1-2'
+  //     }
+  //   ];
+  //   setArticles(mockArticles);
+  // }, []);
 
   const getCategoryColor = (category: string) => {
     const colors = {

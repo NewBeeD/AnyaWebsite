@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import UseChurchApi from '@/hooks/Events/UseChurchApi'
 
 interface ChurchEvent {
   id: string;
@@ -26,177 +27,15 @@ interface ChurchEvent {
 }
 
 export default function ChurchEvents() {
-  const [events, setEvents] = useState<ChurchEvent[]>([]);
+  
+  const {events, loading, error} = UseChurchApi()
+  
+
   const [filter, setFilter] = useState<string>('all');
   const [selectedEvent, setSelectedEvent] = useState<ChurchEvent | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState<string>('');
 
-  // Sample church events data
-  useEffect(() => {
-    const mockEvents: ChurchEvent[] = [
-      {
-        id: '1',
-        title: 'Biblical Financial Planning & Budgeting',
-        date: new Date(2024, 6, 20),
-        time: '6:30 PM - 8:30 PM',
-        church: 'Grace Community Church',
-        location: 'Kingston',
-        address: '123 Main Street, Kingston',
-        type: 'financial',
-        description: 'Learn how to manage your finances according to biblical principles. Practical budgeting techniques, debt management, and financial stewardship teaching.',
-        targetAudience: 'Adults & Young Adults',
-        cost: 'free',
-        contactPerson: 'Deacon John Smith',
-        contactEmail: 'finance@gracecommunity.org',
-        contactPhone: '(876) 555-0123',
-        registrationRequired: true,
-        registrationLink: '#register',
-        tags: ['Budgeting', 'Stewardship', 'Debt Management'],
-        featured: true
-      },
-      {
-        id: '2',
-        title: 'Navigating Difficult Conversations in Relationships',
-        date: new Date(2024, 6, 25),
-        time: '7:00 PM - 9:00 PM',
-        church: 'Unity Fellowship',
-        location: 'Montego Bay',
-        address: '456 Harmony Lane, Montego Bay',
-        type: 'relationships',
-        description: 'Biblical guidance on handling conflict, communication skills, and building healthy relationships in marriage, family, and friendships.',
-        targetAudience: 'Married Couples & Singles',
-        cost: 'paid',
-        costAmount: 25,
-        contactPerson: 'Pastor Sarah Johnson',
-        contactEmail: 'relationships@unityfellowship.org',
-        contactPhone: '(876) 555-0124',
-        registrationRequired: true,
-        registrationLink: '#register',
-        tags: ['Communication', 'Conflict Resolution', 'Marriage'],
-        featured: true
-      },
-      {
-        id: '3',
-        title: 'Contemporary Social Issues & Christian Response',
-        date: new Date(2024, 7, 5),
-        time: '6:00 PM - 8:00 PM',
-        church: 'Truth Seekers Church',
-        location: 'Spanish Town',
-        address: '789 Truth Avenue, Spanish Town',
-        type: 'social-issues',
-        description: 'Thoughtful discussion on current social topics from a biblical perspective. Learn how to engage culture with truth and love.',
-        targetAudience: 'Youth & Adults',
-        cost: 'free',
-        contactPerson: 'Elder Michael Brown',
-        contactEmail: 'outreach@truthseekers.org',
-        contactPhone: '(876) 555-0125',
-        registrationRequired: false,
-        tags: ['Culture', 'Apologetics', 'Engagement'],
-        featured: false
-      },
-      {
-        id: '4',
-        title: 'Christian Parenting in a Digital Age',
-        date: new Date(2024, 7, 12),
-        time: '5:30 PM - 7:30 PM',
-        church: 'Family Life Center',
-        location: 'Portmore',
-        address: '321 Family Road, Portmore',
-        type: 'parenting',
-        description: 'Practical strategies for raising children with strong faith in today\'s technology-driven world. Screen time management, online safety, and spiritual formation.',
-        targetAudience: 'Parents & Guardians',
-        cost: 'free',
-        contactPerson: 'Sister Maria Garcia',
-        contactEmail: 'family@familylifecenter.org',
-        contactPhone: '(876) 555-0126',
-        registrationRequired: true,
-        registrationLink: '#register',
-        tags: ['Digital Parenting', 'Technology', 'Child Development'],
-        featured: true
-      },
-      {
-        id: '5',
-        title: 'Mental Health & Spiritual Wellness Workshop',
-        date: new Date(2024, 7, 18),
-        time: '9:00 AM - 12:00 PM',
-        church: 'Healing Waters Church',
-        location: 'Ocho Rios',
-        address: '654 Wellness Drive, Ocho Rios',
-        type: 'health',
-        description: 'Understanding the connection between mental health and spiritual life. Coping strategies, support resources, and biblical perspectives on mental wellness.',
-        targetAudience: 'All Ages',
-        cost: 'paid',
-        costAmount: 15,
-        contactPerson: 'Counselor David Wilson',
-        contactEmail: 'wellness@healingwaters.org',
-        contactPhone: '(876) 555-0127',
-        registrationRequired: true,
-        registrationLink: '#register',
-        tags: ['Mental Health', 'Wellness', 'Counseling'],
-        featured: false
-      },
-      {
-        id: '6',
-        title: 'Theology 101: Understanding Core Christian Beliefs',
-        date: new Date(2024, 7, 22),
-        time: '6:30 PM - 8:00 PM',
-        church: 'Foundation Bible Church',
-        location: 'Mandeville',
-        address: '987 Doctrine Street, Mandeville',
-        type: 'theology',
-        description: 'Beginner-friendly exploration of essential Christian doctrines. Trinity, salvation, grace, and the authority of Scripture explained clearly.',
-        targetAudience: 'New Believers & Seekers',
-        cost: 'free',
-        contactPerson: 'Dr. Robert Chen',
-        contactEmail: 'theology@foundationbible.org',
-        contactPhone: '(876) 555-0128',
-        registrationRequired: false,
-        tags: ['Doctrine', 'Theology', 'Bible Study'],
-        featured: false
-      },
-      {
-        id: '7',
-        title: 'Community Outreach & Service Projects Planning',
-        date: new Date(2024, 8, 2),
-        time: '4:00 PM - 6:00 PM',
-        church: 'Servants Heart Ministry',
-        location: 'May Pen',
-        address: '147 Service Road, May Pen',
-        type: 'community',
-        description: 'Learn how to organize and participate in effective community service projects. Partnership opportunities with local organizations.',
-        targetAudience: 'Church Leaders & Volunteers',
-        cost: 'free',
-        contactPerson: 'Minister Thomas Reed',
-        contactEmail: 'outreach@servantsheart.org',
-        contactPhone: '(876) 555-0129',
-        registrationRequired: true,
-        registrationLink: '#register',
-        tags: ['Service', 'Outreach', 'Volunteering'],
-        featured: true
-      },
-      {
-        id: '8',
-        title: 'Deepening Your Prayer Life',
-        date: new Date(2024, 8, 9),
-        time: '7:00 PM - 8:30 PM',
-        church: 'Prayer Warriors Fellowship',
-        location: 'Linstead',
-        address: '258 Prayer Circle, Linstead',
-        type: 'spiritual-growth',
-        description: 'Practical workshop on developing a consistent and meaningful prayer life. Different prayer methods and overcoming common obstacles.',
-        targetAudience: 'All Believers',
-        cost: 'free',
-        contactPerson: 'Prayer Leader Elizabeth White',
-        contactEmail: 'prayer@prayerwarriors.org',
-        contactPhone: '(876) 555-0130',
-        registrationRequired: false,
-        tags: ['Prayer', 'Spiritual Growth', 'Devotion'],
-        featured: false
-      }
-    ];
-    setEvents(mockEvents);
-  }, []);
 
   const getEventTypeColor = (type: string) => {
     const colors = {
@@ -513,7 +352,7 @@ export default function ChurchEvents() {
         </div>
 
         {/* Events Grid/List */}
-        {filteredEvents.length === 0 ? (
+        {filteredEvents.length === 0 && loading ? (
           <div className="bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-8! text-center! mx-2! sm:mx-0!">
             <svg className="w-12! h-12! text-gray-400! mx-auto! mb-4!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
