@@ -35,10 +35,6 @@ export default function useCalendarApi(): ArticleApiResult {
   // Filter at the API level instead of client-side
   const { data, loading, error } = useStrapiQuery('/articles?populate=*');
 
-  console.log('Raw data:', data);
-  console.log('First event:', data?.data?.[0]);
-  console.log('EventCategory of first event:', data?.data?.[0]?.EventCategory);
-
   if (loading || error || !data) {
     return { events: [], loading, error };
   }
@@ -51,7 +47,7 @@ export default function useCalendarApi(): ArticleApiResult {
       authorRole: item.AuthorRole,
       church: item.Church,
       date: new Date(item.Date),
-      category: item.Category,
+      category: LowerCase(item.Category),
       description: item.Description,
       content: item.Content,
       readingTime: item.ReadingTime,
@@ -64,36 +60,17 @@ export default function useCalendarApi(): ArticleApiResult {
       scripture: item.Scripture,
       slug: item.Slug
 
-    })) ?? [];
-
-
-    console.log('events', events);
-    
+    })) ?? [];   
    
 
   return { events, loading, error };
 }
 
 
+function LowerCase(point){
 
-function extractTime(
-  dateString: string, 
-  options: { includeSeconds?: boolean; timeZone?: 'local' | 'utc' } = {}
-): string {
-  const { includeSeconds = false, timeZone = 'local' } = options;
-  
-  const date = new Date(dateString);
-  
-  // Use UTC or local time
-  const getHours = timeZone === 'utc' ? date.getUTCHours() : date.getHours();
-  const getMinutes = timeZone === 'utc' ? date.getUTCMinutes() : date.getMinutes();
-  const getSeconds = timeZone === 'utc' ? date.getUTCSeconds() : date.getSeconds();
+  return point.toLowerCase();
 
-  const hours = getHours.toString().padStart(2, '0');
-  const minutes = getMinutes.toString().padStart(2, '0');
-  const seconds = getSeconds.toString().padStart(2, '0');
-
-  return includeSeconds ? `${hours}:${minutes}:${seconds}` : `${hours}:${minutes}`;
 }
 
 

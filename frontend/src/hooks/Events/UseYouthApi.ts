@@ -28,9 +28,6 @@ export default function useCalendarApi(): YouthApiResult {
   // Filter at the API level instead of client-side
   const { data, loading, error } = useStrapiQuery('/events?populate=*&filters[EventCategory][$eq]=youth');
 
-  // console.log('Raw data:', data);
-  // console.log('First event:', data?.data?.[0]);
-  // console.log('EventCategory of first event:', data?.data?.[0]?.EventCategory);
 
   if (loading || error || !data) {
     return { events: [], loading, error };
@@ -51,11 +48,7 @@ export default function useCalendarApi(): YouthApiResult {
       image: item.Image
 
     })) ?? [];
-
-
-    console.log('events', events);
-    
-   
+ 
 
   return { events, loading, error };
 }

@@ -130,11 +130,7 @@ export const useStrapiQuery = (endpoint, options = {}) => {
     };
 
     fetchData();
-  }, [endpoint]); // Remove options from dependencies
-
-
-  // console.log('EventApi', data);
-  
+  }, [endpoint]); // Remove options from dependencies  
 
   return { data, loading, error };
 };

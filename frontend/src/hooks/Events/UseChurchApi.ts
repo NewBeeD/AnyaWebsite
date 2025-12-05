@@ -36,9 +36,6 @@ export default function useCalendarApi(): ChurchApiResult {
   // Filter at the API level instead of client-side
   const { data, loading, error } = useStrapiQuery('/events?populate=*&filters[EventCategory][$eq]=church');
 
-  // console.log('Raw data:', data);
-  // console.log('First event:', data?.data?.[0]);
-  // console.log('EventCategory of first event:', data?.data?.[0]?.EventCategory);
 
   if (loading || error || !data) {
     return { events: [], loading, error };
@@ -66,11 +63,7 @@ export default function useCalendarApi(): ChurchApiResult {
       contactEmail: item.ContactEmail,
       contactPhone: item.ContactPhone
 
-    })) ?? [];
-
-
-    console.log('events', events);
-    
+    })) ?? []; 
    
 
   return { events, loading, error };
