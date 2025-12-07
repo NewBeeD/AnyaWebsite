@@ -14,6 +14,7 @@ interface YouthEvent {
   registrationRequired: boolean;
   registrationLink?: string;
   image?: string;
+  country: string;
 }
 
 interface YouthApiResult {
@@ -45,7 +46,8 @@ export default function useCalendarApi(): YouthApiResult {
       registrationRequired: item.RegistrationRequired,
       registrationLink: item.RegistrationLink,
       ageGroup: item.AgeGroup,
-      image: item.Image
+      image: item.Image,
+      country: item.Country ?? 'Dominica',
 
     })) ?? [];
  

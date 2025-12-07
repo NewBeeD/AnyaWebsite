@@ -3,6 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import UseChurchApi from '@/hooks/Events/UseChurchApi'
+import Link from 'next/link';
 
 interface ChurchEvent {
   id: string;
@@ -24,6 +25,7 @@ interface ChurchEvent {
   registrationLink?: string;
   tags: string[];
   featured: boolean;
+  country: string;
 }
 
 export default function ChurchEvents() {
@@ -35,6 +37,7 @@ export default function ChurchEvents() {
   const [selectedEvent, setSelectedEvent] = useState<ChurchEvent | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [countryFilter, setCountryFilter] = useState<string>('all'); // New state for country filter
 
 
   const getEventTypeColor = (type: string) => {
@@ -74,6 +77,9 @@ export default function ChurchEvents() {
     });
   };
 
+  // Get unique countries from events
+  const countries = Array.from(new Set(events.map(event => event.country))).sort();
+
   const filteredEvents = events.filter(event => {
     const matchesFilter = filter === 'all' || event.type === filter;
     const matchesSearch = searchTerm === '' || 
@@ -81,8 +87,9 @@ export default function ChurchEvents() {
       event.church.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
       event.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCountry = countryFilter === 'all' || event.country === countryFilter; // New country filter condition
     
-    return matchesFilter && matchesSearch;
+    return matchesFilter && matchesSearch && matchesCountry;
   });
 
   const EventCard = ({ event }: { event: ChurchEvent }) => (
@@ -150,6 +157,14 @@ export default function ChurchEvents() {
           </svg>
           <span className="text-sm! text-gray-700!">{event.targetAudience}</span>
         </div>
+
+        {/* Added country display */}
+        <div className="flex! items-center! space-x-2!">
+          <svg className="w-4! h-4! text-gray-400!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-sm! text-gray-700!">{event.country}</span>
+        </div>
       </div>
 
       {/* Tags */}
@@ -170,9 +185,24 @@ export default function ChurchEvents() {
           View Details
         </button>
         {event.registrationRequired && event.registrationLink && (
-          <button className="flex-1! border! border-blue-600! text-blue-600! py-2! px-4! rounded-lg! font-medium! hover:bg-blue-50! transition-colors! duration-200! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:ring-offset-2!">
-            Register
-          </button>
+
+
+
+          <Link
+          href={event.registrationLink?? '#'}
+          target={event.registrationLink == null? '_self': '_blank'}
+          rel="noopener noreferrer"
+          >
+
+            <button className="flex-1! border! border-blue-600! text-blue-600! py-2! px-4! rounded-lg! font-medium! hover:bg-blue-50! transition-colors! duration-200! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:ring-offset-2!">
+              Register
+            </button>
+
+            
+          </Link>
+          
+          
+          
         )}
       </div>
     </div>
@@ -229,6 +259,12 @@ export default function ChurchEvents() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
               </svg>
               <span>{event.location}</span>
+            </div>
+            <div className="flex! items-center! space-x-1!">
+              <svg className="w-4! h-4! text-gray-400!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{event.country}</span>
             </div>
           </div>
 
@@ -326,39 +362,68 @@ export default function ChurchEvents() {
               </div>
             </div>
 
-            {/* Filter */}
-            <div className="flex! items-center! gap-x-3! w-full! lg:w-auto!">
-              <label htmlFor="event-type-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
-                Filter by topic:
-              </label>
-              <select
-                id="event-type-filter"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full! lg:w-auto! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
-              >
-                <option value="all">All Topics</option>
-                <option value="financial">Financial</option>
-                <option value="relationships">Relationships</option>
-                <option value="theology">Theology</option>
-                <option value="parenting">Parenting</option>
-                <option value="health">Health & Wellness</option>
-                <option value="social-issues">Social Issues</option>
-                <option value="spiritual-growth">Spiritual Growth</option>
-                <option value="community">Community</option>
-              </select>
+            {/* Filters */}
+            <div className="flex! flex-col! sm:flex-row! items-start! sm:items-center! gap-3! w-full! lg:w-auto!">
+              {/* Country Filter */}
+              <div className="flex! items-center! gap-x-3! w-full! sm:w-auto!">
+                <label htmlFor="country-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
+                  Country:
+                </label>
+                <select
+                  id="country-filter"
+                  value={countryFilter}
+                  onChange={(e) => setCountryFilter(e.target.value)}
+                  className="w-full! sm:w-40! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
+                >
+                  <option value="all">All Countries</option>
+                  {countries.map(country => (
+                    <option key={country} value={country}>{country}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Type Filter */}
+              <div className="flex! items-center! gap-x-3! w-full! sm:w-auto!">
+                <label htmlFor="event-type-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
+                  Topic:
+                </label>
+                <select
+                  id="event-type-filter"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="w-full! sm:w-40! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
+                >
+                  <option value="all">All Topics</option>
+                  <option value="financial">Financial</option>
+                  <option value="relationships">Relationships</option>
+                  <option value="theology">Theology</option>
+                  <option value="parenting">Parenting</option>
+                  <option value="health">Health & Wellness</option>
+                  <option value="social-issues">Social Issues</option>
+                  <option value="spiritual-growth">Spiritual Growth</option>
+                  <option value="community">Community</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Events Grid/List */}
-        {filteredEvents.length === 0 && loading ? (
+        {filteredEvents.length === 0 && !loading ? (
           <div className="bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-8! text-center! mx-2! sm:mx-0!">
             <svg className="w-12! h-12! text-gray-400! mx-auto! mb-4!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <h3 className="text-lg! font-medium! text-gray-900! mb-2!">No events found</h3>
             <p className="text-gray-600!">Try adjusting your search or filters to see more events.</p>
+          </div>
+        ) : loading ? (
+          <div className="bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-8! text-center! mx-2! sm:mx-0!">
+            <div className="animate-pulse!">
+              <div className="h-4! bg-gray-200! rounded! w-3/4! mx-auto! mb-4!"></div>
+              <div className="h-4! bg-gray-200! rounded! w-1/2! mx-auto!"></div>
+            </div>
+            <p className="text-gray-600! mt-4!">Loading events...</p>
           </div>
         ) : view === 'grid' ? (
           <div className="grid! grid-cols-1! md:grid-cols-2! xl:grid-cols-3! gap-6! mx-2! sm:mx-0!">
@@ -469,6 +534,16 @@ export default function ChurchEvents() {
                   <div>
                     <p className="text-sm! font-medium! text-gray-900!">Location</p>
                     <p className="text-sm! text-gray-600!">{selectedEvent.address}, {selectedEvent.location}</p>
+                  </div>
+                </div>
+
+                <div className="flex! items-start! gap-x-3!">
+                  <svg className="w-5! h-5! text-gray-400! mt-0.5! flex-shrink-0!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <div>
+                    <p className="text-sm! font-medium! text-gray-900!">Country</p>
+                    <p className="text-sm! text-gray-600!">{selectedEvent.country}</p>
                   </div>
                 </div>
 

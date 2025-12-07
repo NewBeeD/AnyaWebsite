@@ -22,6 +22,7 @@ interface ChurchEvent {
   registrationLink?: string;
   tags: string[];
   featured: boolean;
+  country: string;
 }
 
 interface ChurchApiResult {
@@ -61,7 +62,8 @@ export default function useCalendarApi(): ChurchApiResult {
       featured: item.Featured,
       contactPerson: item.ContactPerson,
       contactEmail: item.ContactEmail,
-      contactPhone: item.ContactPhone
+      contactPhone: item.ContactPhone,
+      country: item.Country,
 
     })) ?? []; 
    

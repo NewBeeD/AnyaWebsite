@@ -3,7 +3,8 @@
 
 import { useState, useEffect } from 'react';
 import UseConfernceApi from '@/hooks/Events/UseConferenceApi'
- 
+import Link from 'next/link';
+
 interface Conference {
   id: string;
   title: string;
@@ -21,21 +22,20 @@ interface Conference {
   registeredCount: number;
   image?: string;
   tags: string[];
+  country: string;
 }
 
 export default function UpcomingConferences() {
-
-
   const {events: conferences, loading, error} = UseConfernceApi()
   
-  
-  // const [conferences, setConferences] = useState<Conference[]>([]);
-  const [filter, setFilter] = useState<string>('all');
+  const [typeFilter, setTypeFilter] = useState<string>('all');
+  const [countryFilter, setCountryFilter] = useState<string>('all');
   const [selectedConference, setSelectedConference] = useState<Conference | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState<'date' | 'title' | 'fee'>('date');
 
-
+  // Extract unique countries from conferences
+  const countries = Array.from(new Set(conferences.map(conf => conf.country))).sort();
 
   const getConferenceTypeColor = (type: string) => {
     const colors = {
@@ -82,7 +82,11 @@ export default function UpcomingConferences() {
   };
 
   const filteredAndSortedConferences = conferences
-    .filter(conference => filter === 'all' || conference.type === filter)
+    .filter(conference => {
+      const matchesType = typeFilter === 'all' || conference.type === typeFilter;
+      const matchesCountry = countryFilter === 'all' || conference.country === countryFilter;
+      return matchesType && matchesCountry;
+    })
     .sort((a, b) => {
       switch (sortBy) {
         case 'date':
@@ -107,6 +111,9 @@ export default function UpcomingConferences() {
           <div>
             <span className={`inline-flex! items-center! px-2.5! py-1! rounded-full! text-xs! font-medium! ${getConferenceTypeBadge(conference.type)}`}>
               {conference.type.charAt(0).toUpperCase() + conference.type.slice(1)}
+            </span>
+            <span className="ml-2! inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-gray-100! text-gray-800!">
+              {conference.country}
             </span>
           </div>
           <span className={`inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! ${status.color}`}>
@@ -178,9 +185,22 @@ export default function UpcomingConferences() {
             >
               Details
             </button>
-            <button className="px-4! py-2! text-sm! font-medium! bg-blue-600! text-white! rounded-lg! hover:bg-blue-700! transition-colors! duration-200! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:ring-offset-2!">
-              Register
-            </button>
+
+
+            <Link
+            href={conference.registrationLink?? '#'}
+            target={conference.registrationLink == null? '_self': '_blank'}
+            rel="noopener noreferrer">
+
+              <button className="px-4! py-2! text-sm! font-medium! bg-blue-600! text-white! rounded-lg! hover:bg-blue-700! transition-colors! duration-200! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:ring-offset-2!">
+                Register
+              </button>
+
+
+            </Link>
+
+
+
           </div>
         </div>
       </div>
@@ -197,6 +217,9 @@ export default function UpcomingConferences() {
             <div className="flex! items-center! space-x-3! mb-3!">
               <span className={`inline-flex! items-center! px-2.5! py-1! rounded-full! text-xs! font-medium! ${getConferenceTypeBadge(conference.type)}`}>
                 {conference.type.charAt(0).toUpperCase() + conference.type.slice(1)}
+              </span>
+              <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-gray-100! text-gray-800!">
+                {conference.country}
               </span>
               <span className={`inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! ${status.color}`}>
                 {status.text}
@@ -243,6 +266,7 @@ export default function UpcomingConferences() {
             >
               Details
             </button>
+
             <button className="px-4! py-2! bg-blue-600! text-white! rounded-lg! font-medium! hover:bg-blue-700! transition-colors! duration-200! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:ring-offset-2!">
               Register
             </button>
@@ -313,37 +337,62 @@ export default function UpcomingConferences() {
               </div>
             </div>
 
-            {/* Filter */}
-            <div className="flex! items-center! gap-x-3! w-full! lg:w-auto!">
-              <label htmlFor="conference-type-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
-                Filter by type:
-              </label>
-              <select
-                id="conference-type-filter"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full! lg:w-auto! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
-              >
-                <option value="all">All Conferences</option>
-                <option value="leadership">Leadership</option>
-                <option value="worship">Worship</option>
-                <option value="youth">Youth</option>
-                <option value="family">Family</option>
-                <option value="evangelism">Evangelism</option>
-                <option value="teaching">Teaching</option>
-              </select>
+            {/* Filters */}
+            <div className="flex! flex-col! sm:flex-row! gap-4! w-full! lg:w-auto!">
+              {/* Country Filter */}
+              <div className="flex! items-center! gap-x-3! w-full! sm:w-auto!">
+                <label htmlFor="country-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
+                  Country:
+                </label>
+                <select
+                  id="country-filter"
+                  value={countryFilter}
+                  onChange={(e) => setCountryFilter(e.target.value)}
+                  className="w-full! sm:w-auto! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
+                >
+                  <option value="all">All Countries</option>
+                  {countries.map(country => (
+                    <option key={country} value={country}>{country}</option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Type Filter */}
+              <div className="flex! items-center! gap-x-3! w-full! sm:w-auto!">
+                <label htmlFor="conference-type-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
+                  Type:
+                </label>
+                <select
+                  id="conference-type-filter"
+                  value={typeFilter}
+                  onChange={(e) => setTypeFilter(e.target.value)}
+                  className="w-full! sm:w-auto! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
+                >
+                  <option value="all">All Types</option>
+                  <option value="leadership">Leadership</option>
+                  <option value="worship">Worship</option>
+                  <option value="youth">Youth</option>
+                  <option value="family">Family</option>
+                  <option value="evangelism">Evangelism</option>
+                  <option value="teaching">Teaching</option>
+                </select>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Conferences Grid/List */}
-        {filteredAndSortedConferences.length === 0 && loading ? (
+        {filteredAndSortedConferences.length === 0 && !loading ? (
           <div className="bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-8! text-center! mx-2! sm:mx-0!">
             <svg className="w-12! h-12! text-gray-400! mx-auto! mb-4!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
             </svg>
             <h3 className="text-lg! font-medium! text-gray-900! mb-2!">No conferences found</h3>
             <p className="text-gray-600!">Try adjusting your filters to see more conferences.</p>
+          </div>
+        ) : loading ? (
+          <div className="text-center py-8">
+            <p className="text-gray-600">Loading conferences...</p>
           </div>
         ) : view === 'grid' ? (
           <div className="grid! grid-cols-1! md:grid-cols-2! xl:grid-cols-3! gap-6! mx-2! sm:mx-0!">
@@ -394,6 +443,9 @@ export default function UpcomingConferences() {
                     <span className={`inline-flex! items-center! px-2.5! py-1! rounded-full! text-xs! font-medium! ${getConferenceTypeBadge(selectedConference.type)}`}>
                       {selectedConference.type.charAt(0).toUpperCase() + selectedConference.type.slice(1)}
                     </span>
+                    <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-gray-100! text-gray-800!">
+                      {selectedConference.country}
+                    </span>
                     {selectedConference.tags.map(tag => (
                       <span key={tag} className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-gray-100! text-gray-800!">
                         {tag}
@@ -433,6 +485,7 @@ export default function UpcomingConferences() {
                       <p className="text-sm! font-medium! text-gray-900!">Location</p>
                       <p className="text-sm! text-gray-600!">{selectedConference.venue}</p>
                       <p className="text-sm! text-gray-500!">{selectedConference.location}</p>
+                      <p className="text-sm! text-gray-500!">{selectedConference.country}</p>
                     </div>
                   </div>
 

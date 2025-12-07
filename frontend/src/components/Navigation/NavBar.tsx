@@ -76,7 +76,8 @@ export default function Navbar() {
         { name: 'Full Calendar View', href: '/events/calendar' },
         { name: 'Upcoming Conferences', href: '/events/conferences' },
         { name: 'Church Programs', href: '/events/churchprograms' },
-        { name: 'Youth Events', href: '/events/youth' }
+        { name: 'Youth Events', href: '/events/youth' },
+        { name: 'Events Gallery', href: '/events/eventsgallery' }
       ]
     },
     {
@@ -86,9 +87,16 @@ export default function Navbar() {
         { name: 'Sermons', href: '/resources/sermons' },
         { name: 'Articles & Blog', href: '/resources/articles' },
         { name: 'Downloads', href: '#' },
-        { name: 'For Leaders (Login)', href: '#' }
+        // { name: 'For Leaders (Login)', href: '#' }
       ]
-    }
+    },
+    {
+      name: 'GAMES',
+      href: '#',
+      dropdown: [
+        { name: 'Bible-Timeline', href: '/' },
+      ]
+    },
   ];
 
   const menuItems2 = [    

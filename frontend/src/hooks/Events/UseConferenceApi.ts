@@ -56,9 +56,15 @@ export default function useCalendarApi(): CalendarApiResult {
       capacity: item.Capacity,
       registeredCount: item.RegisteredCount,
       image: item.Image ?? '',
-      tags: item.Tags
+      tags: item.Tags,
+      country: item.Country ?? 'Unknown Country',
 
     })) ?? [];
+
+
+
+    console.log(events);
+    
    
 
   return { events, loading, error };

@@ -11,15 +11,15 @@ const QuickStats = () => {
   useEffect(() => {
   const duration = 1500; // 1 second
   const steps = 60;
-  const incrementChurches = 30 / steps;
-  const incrementRegions = 5 / steps;
+  const incrementChurches = 99 / steps;
+  const incrementRegions = 25 / steps;
   
   let currentStep = 0;
   
   const interval = setInterval(() => {
     currentStep++;
-    setChurchesCount(Math.min(30, Math.floor(incrementChurches * currentStep)));
-    setRegionsCount(Math.min(5, Math.floor(incrementRegions * currentStep)));
+    setChurchesCount(Math.min(99, Math.floor(incrementChurches * currentStep)));
+    setRegionsCount(Math.min(25, Math.floor(incrementRegions * currentStep)));
     
     if (currentStep >= steps) {
       clearInterval(interval);
@@ -42,7 +42,7 @@ const QuickStats = () => {
           <div className="text-sm text-gray-600 mt-1">Regions</div>
         </div>
         <div>
-          <div className="text-2xl font-bold text-indigo-700">2004</div>
+          <div className="text-2xl font-bold text-indigo-700">2000</div>
           <div className="text-sm text-gray-600 mt-1">Serving Since</div>
         </div>
       </div>

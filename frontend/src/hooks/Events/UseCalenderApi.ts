@@ -20,6 +20,9 @@ interface CalendarApiResult {
 export default function useCalendarApi(): CalendarApiResult {
   const { data, loading, error } = useStrapiQuery('/events');
 
+ console.log('Here is the data', data);
+ 
+
   if (loading || error || !data) {
     return { events: [], loading, error };
   }
@@ -30,8 +33,9 @@ export default function useCalendarApi(): CalendarApiResult {
       title: item.Title ?? 'Untitled Event',
       date: new Date(item.Date),
       church: item.Church ?? 'Unknown Church',
-      type: (item.EventType?.toLowerCase() as CalendarEvent['type']) || 'other',
+      type: (item.EventCategory?.toLowerCase() as CalendarEvent['type']) || 'other',
       description: item.Description ?? 'No description',
+      country: item.Country ?? 'Dominica',
     })) ?? [];
 
 

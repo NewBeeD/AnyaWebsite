@@ -61,7 +61,7 @@ export default function FeaturedEventsCarousel() {
   }, [emblaApi, onSelect])
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full! px-2! flex justify-center items-center">
+    <div className="bg-white rounded-lg shadow-sm border border-gray-200 w-full! px-2! flex justify-center items-center pt-6!">
 
       
       

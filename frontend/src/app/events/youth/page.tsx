@@ -1,8 +1,9 @@
 // app/youth-events/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import UseYouthApi from '@/hooks/Events/UseYouthApi'
+import Link from 'next/link';
 
 interface YouthEvent {
   id: string;
@@ -16,18 +17,23 @@ interface YouthEvent {
   registrationRequired: boolean;
   registrationLink?: string;
   image?: string;
+  country: string;
 }
 
 export default function YouthEvents() {
-
-  const {events, loading, error} = UseYouthApi()
-
-  // const [events, setEvents] = useState<YouthEvent[]>([]);
+  const { events, loading, error } = UseYouthApi();
   const [filter, setFilter] = useState<string>('all');
+  const [countryFilter, setCountryFilter] = useState<string>('all');
   const [selectedEvent, setSelectedEvent] = useState<YouthEvent | null>(null);
   const [view, setView] = useState<'grid' | 'list'>('grid');
 
-
+  // Get unique countries from events
+  const countries = useMemo(() => {
+    const uniqueCountries = Array.from(new Set(events.map(event => event.country)))
+      .filter(country => country) // Remove empty/null countries
+      .sort(); // Sort alphabetically
+    return uniqueCountries;
+  }, [events]);
 
   const getEventTypeColor = (type: string) => {
     const colors = {
@@ -62,12 +68,14 @@ export default function YouthEvents() {
     });
   };
 
-  const filteredEvents = events.filter(event => 
-    filter === 'all' || event.type === filter
-  );
+  // Filter events by both type and country
+  const filteredEvents = events.filter(event => {
+    const typeMatch = filter === 'all' || event.type === filter;
+    const countryMatch = countryFilter === 'all' || event.country === countryFilter;
+    return typeMatch && countryMatch;
+  });
 
   const EventCard = ({ event }: { event: YouthEvent }) => (
-    
     <div className="bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-6! hover:shadow-md! transition-all! duration-200!">
       <div className="flex! justify-between! items-start! mb-4!">
         <div>
@@ -77,6 +85,11 @@ export default function YouthEvents() {
           <span className="ml-2! inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-gray-100! text-gray-800!">
             {event.ageGroup}
           </span>
+          {event.country && (
+            <span className="ml-2! inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-indigo-100! text-indigo-800!">
+              {event.country}
+            </span>
+          )}
         </div>
         {event.registrationRequired && (
           <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-yellow-100! text-yellow-800!">
@@ -125,9 +138,22 @@ export default function YouthEvents() {
           View Details
         </button>
         {event.registrationRequired && event.registrationLink && (
-          <button className="flex-1! border! border-blue-600! text-blue-600! py-2! px-4! rounded-lg! font-medium! hover:bg-blue-50! transition-colors! duration-200! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:ring-offset-2!">
-            Register
-          </button>
+
+
+
+          <Link
+          href={event.registrationLink?? '#'}
+          target={event.registrationLink == null? '_self': '_blank'}
+          rel="noopener noreferrer">
+
+            <button className="flex-1! border! border-blue-600! text-blue-600! py-2! px-4! rounded-lg! font-medium! hover:bg-blue-50! transition-colors! duration-200! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:ring-offset-2!">
+              Register
+            </button>
+
+          </Link>
+          
+          
+          
         )}
       </div>
     </div>
@@ -144,6 +170,11 @@ export default function YouthEvents() {
             <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-gray-100! text-gray-800!">
               {event.ageGroup}
             </span>
+            {event.country && (
+              <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-indigo-100! text-indigo-800!">
+                {event.country}
+              </span>
+            )}
             {event.registrationRequired && (
               <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-yellow-100! text-yellow-800!">
                 Registration Required
@@ -178,6 +209,14 @@ export default function YouthEvents() {
               </svg>
               <span>{event.church}</span>
             </div>
+            {event.country && (
+              <div className="flex! items-center! space-x-1!">
+                <svg className="w-4! h-4! text-gray-400!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>{event.country}</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -242,25 +281,48 @@ export default function YouthEvents() {
               </div>
             </div>
 
-            {/* Filter */}
-            <div className="flex! items-center! gap-x-3! w-full! sm:w-auto!">
-              <label htmlFor="event-type-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
-                Filter by type:
-              </label>
-              <select
-                id="event-type-filter"
-                value={filter}
-                onChange={(e) => setFilter(e.target.value)}
-                className="w-full! sm:w-auto! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
-              >
-                <option value="all">All Events</option>
-                <option value="camp">Camps</option>
-                <option value="workshop">Workshops</option>
-                <option value="retreat">Retreats</option>
-                <option value="conference">Conferences</option>
-                <option value="social">Social Events</option>
-                <option value="mission">Mission Trips</option>
-              </select>
+            {/* Filters Container */}
+            <div className="flex! flex-col! sm:flex-row! gap-4! w-full! sm:w-auto!">
+              {/* Event Type Filter */}
+              <div className="flex! items-center! gap-x-3! w-full! sm:w-auto!">
+                <label htmlFor="event-type-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
+                  Event Type:
+                </label>
+                <select
+                  id="event-type-filter"
+                  value={filter}
+                  onChange={(e) => setFilter(e.target.value)}
+                  className="w-full! sm:w-auto! min-w-[140px]! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
+                >
+                  <option value="all">All Events</option>
+                  <option value="camp">Camps</option>
+                  <option value="workshop">Workshops</option>
+                  <option value="retreat">Retreats</option>
+                  <option value="conference">Conferences</option>
+                  <option value="social">Social Events</option>
+                  <option value="mission">Mission Trips</option>
+                </select>
+              </div>
+
+              {/* Country Filter */}
+              <div className="flex! items-center! gap-x-3! w-full! sm:w-auto!">
+                <label htmlFor="country-filter" className="text-sm! font-medium! text-gray-700! whitespace-nowrap!">
+                  Country:
+                </label>
+                <select
+                  id="country-filter"
+                  value={countryFilter}
+                  onChange={(e) => setCountryFilter(e.target.value)}
+                  className="w-full! sm:w-auto! min-w-[140px]! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
+                >
+                  <option value="all">All Countries</option>
+                  {countries.map((country) => (
+                    <option key={country} value={country}>
+                      {country}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         </div>
@@ -326,6 +388,11 @@ export default function YouthEvents() {
                     <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-gray-100! text-gray-800!">
                       Ages {selectedEvent.ageGroup}
                     </span>
+                    {selectedEvent.country && (
+                      <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-indigo-100! text-indigo-800!">
+                        {selectedEvent.country}
+                      </span>
+                    )}
                     {selectedEvent.registrationRequired && (
                       <span className="inline-flex! items-center! px-2! py-1! rounded! text-xs! font-medium! bg-yellow-100! text-yellow-800!">
                         Registration Required
@@ -380,6 +447,18 @@ export default function YouthEvents() {
                     <p className="text-sm! text-gray-600!">{selectedEvent.church}</p>
                   </div>
                 </div>
+
+                {selectedEvent.country && (
+                  <div className="flex! items-start! space-x-3!">
+                    <svg className="w-5! h-5! text-gray-400! mt-0.5! flex-shrink-0!" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <div>
+                      <p className="text-sm! font-medium! text-gray-900!">Country</p>
+                      <p className="text-sm! text-gray-600!">{selectedEvent.country}</p>
+                    </div>
+                  </div>
+                )}
 
                 <div className="flex! items-start! space-x-3!">
                   <svg className="w-5! h-5! text-gray-400! mt-0.5! flex-shrink-0!" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -55,9 +55,9 @@ export default function ImmediateValueSection() {
       
       <div className="container mx-auto! px-4 w-full!">
         {/* Search Bar */}
-        <div className="w-full! ">
+        {/* <div className="w-full! ">
           <SearchBar />
-        </div>
+        </div> */}
 
 
         <div className="w-full! ">
