@@ -4,6 +4,13 @@ import "./globals.css";
 import NavBar from '@/components/Navigation/NavBar'
 import Footer from '@/components/Navigation/Footer' // Import your footer component
 
+
+// Firebase Analytics initialization moved to a hook
+import AnalyticsInit from "@/hooks/firebase/analyticsinit";
+
+
+
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -32,6 +39,7 @@ export default function RootLayout({
         <NavBar />
         <main className="flex-1">
           {children}
+          <AnalyticsInit />
         </main>
         <Footer />
       </body>
