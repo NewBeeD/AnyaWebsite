@@ -13,7 +13,7 @@ interface Conference {
   location: string;
   venue: string;
   hostChurch: string;
-  type: 'leadership' | 'worship' | 'youth' | 'family' | 'evangelism' | 'teaching';
+  type: 'chaplaincy-ministries' | 'family-life' | 'personal-ministries' | 'disaster-relief' | 'health-ministries' | 'prayer-ministries' | 'possibility-ministries' | 'ministerial-association' | 'publishing-ministries' | 'laymen-services' | 'ministerial-secretary' | 'spirit-of-prophecy' | 'children-adolescent' | 'mens-ministries' | 'sabbath-school' | 'communications' | 'public-affairs' | 'stewardship-ministries' | 'community-services' | 'campus-ministries' | 'womans-ministries' | 'education' | 'planned-giving' | 'youth-ministries' | 'spiritual-growth' | 'discipleship' | 'bible-knowledge' | 'apologetics-doctrine' | 'leadership-development' | 'fellowship-social' | 'community-outreach' | 'evangelism-mission' | 'health-lifestyle' | 'life-skills' | 'creative-arts' | 'recreation-sports' | 'stewardship-service' | 'identity-purpose' | 'technology-media' | 'adventist-heritage';
   description: string;
   speakers: string[];
   registrationFee: number;
@@ -39,24 +39,92 @@ export default function UpcomingConferences() {
 
   const getConferenceTypeColor = (type: string) => {
     const colors = {
-      leadership: 'bg-blue-50! border-blue-200! text-blue-700!',
-      worship: 'bg-purple-50! border-purple-200! text-purple-700!',
-      youth: 'bg-green-50! border-green-200! text-green-700!',
-      family: 'bg-pink-50! border-pink-200! text-pink-700!',
-      evangelism: 'bg-orange-50! border-orange-200! text-orange-700!',
-      teaching: 'bg-indigo-50! border-indigo-200! text-indigo-700!'
+      'chaplaincy-ministries': 'bg-green-50! border-green-200! text-green-700!',
+      'family-life': 'bg-pink-50! border-pink-200! text-pink-700!',
+      'personal-ministries': 'bg-blue-50! border-blue-200! text-blue-700!',
+      'disaster-relief': 'bg-red-50! border-red-200! text-red-700!',
+      'health-ministries': 'bg-red-50! border-red-200! text-red-700!',
+      'prayer-ministries': 'bg-indigo-50! border-indigo-200! text-indigo-700!',
+      'possibility-ministries': 'bg-yellow-50! border-yellow-200! text-yellow-700!',
+      'ministerial-association': 'bg-purple-50! border-purple-200! text-purple-700!',
+      'publishing-ministries': 'bg-orange-50! border-orange-200! text-orange-700!',
+      'laymen-services': 'bg-teal-50! border-teal-200! text-teal-700!',
+      'ministerial-secretary': 'bg-cyan-50! border-cyan-200! text-cyan-700!',
+      'spirit-of-prophecy': 'bg-violet-50! border-violet-200! text-violet-700!',
+      'children-adolescent': 'bg-pink-50! border-pink-200! text-pink-700!',
+      'mens-ministries': 'bg-slate-50! border-slate-200! text-slate-700!',
+      'sabbath-school': 'bg-amber-50! border-amber-200! text-amber-700!',
+      'communications': 'bg-sky-50! border-sky-200! text-sky-700!',
+      'public-affairs': 'bg-rose-50! border-rose-200! text-rose-700!',
+      'stewardship-ministries': 'bg-green-50! border-green-200! text-green-700!',
+      'community-services': 'bg-teal-50! border-teal-200! text-teal-700!',
+      'campus-ministries': 'bg-blue-50! border-blue-200! text-blue-700!',
+      'womans-ministries': 'bg-fuchsia-50! border-fuchsia-200! text-fuchsia-700!',
+      'education': 'bg-lime-50! border-lime-200! text-lime-700!',
+      'planned-giving': 'bg-emerald-50! border-emerald-200! text-emerald-700!',
+      'youth-ministries': 'bg-purple-50! border-purple-200! text-purple-700!',
+      'spiritual-growth': 'bg-indigo-50! border-indigo-200! text-indigo-700!',
+      'discipleship': 'bg-orange-50! border-orange-200! text-orange-700!',
+      'bible-knowledge': 'bg-yellow-50! border-yellow-200! text-yellow-700!',
+      'apologetics-doctrine': 'bg-red-50! border-red-200! text-red-700!',
+      'leadership-development': 'bg-green-50! border-green-200! text-green-700!',
+      'fellowship-social': 'bg-pink-50! border-pink-200! text-pink-700!',
+      'community-outreach': 'bg-cyan-50! border-cyan-200! text-cyan-700!',
+      'evangelism-mission': 'bg-violet-50! border-violet-200! text-violet-700!',
+      'health-lifestyle': 'bg-rose-50! border-rose-200! text-rose-700!',
+      'life-skills': 'bg-blue-50! border-blue-200! text-blue-700!',
+      'creative-arts': 'bg-fuchsia-50! border-fuchsia-200! text-fuchsia-700!',
+      'recreation-sports': 'bg-amber-50! border-amber-200! text-amber-700!',
+      'stewardship-service': 'bg-emerald-50! border-emerald-200! text-emerald-700!',
+      'identity-purpose': 'bg-sky-50! border-sky-200! text-sky-700!',
+      'technology-media': 'bg-slate-50! border-slate-200! text-slate-700!',
+      'adventist-heritage': 'bg-teal-50! border-teal-200! text-teal-700!'
     };
     return colors[type as keyof typeof colors] || 'bg-gray-50! border-gray-200! text-gray-700!';
   };
 
   const getConferenceTypeBadge = (type: string) => {
     const colors = {
-      leadership: 'bg-blue-100! text-blue-800!',
-      worship: 'bg-purple-100! text-purple-800!',
-      youth: 'bg-green-100! text-green-800!',
-      family: 'bg-pink-100! text-pink-800!',
-      evangelism: 'bg-orange-100! text-orange-800!',
-      teaching: 'bg-indigo-100! text-indigo-800!'
+      'chaplaincy-ministries': 'bg-green-100! text-green-800!',
+      'family-life': 'bg-pink-100! text-pink-800!',
+      'personal-ministries': 'bg-blue-100! text-blue-800!',
+      'disaster-relief': 'bg-red-100! text-red-800!',
+      'health-ministries': 'bg-red-100! text-red-800!',
+      'prayer-ministries': 'bg-indigo-100! text-indigo-800!',
+      'possibility-ministries': 'bg-yellow-100! text-yellow-800!',
+      'ministerial-association': 'bg-purple-100! text-purple-800!',
+      'publishing-ministries': 'bg-orange-100! text-orange-800!',
+      'laymen-services': 'bg-teal-100! text-teal-800!',
+      'ministerial-secretary': 'bg-cyan-100! text-cyan-800!',
+      'spirit-of-prophecy': 'bg-violet-100! text-violet-800!',
+      'children-adolescent': 'bg-pink-100! text-pink-800!',
+      'mens-ministries': 'bg-slate-100! text-slate-800!',
+      'sabbath-school': 'bg-amber-100! text-amber-800!',
+      'communications': 'bg-sky-100! text-sky-800!',
+      'public-affairs': 'bg-rose-100! text-rose-800!',
+      'stewardship-ministries': 'bg-green-100! text-green-800!',
+      'community-services': 'bg-teal-100! text-teal-800!',
+      'campus-ministries': 'bg-blue-100! text-blue-800!',
+      'womans-ministries': 'bg-fuchsia-100! text-fuchsia-800!',
+      'education': 'bg-lime-100! text-lime-800!',
+      'planned-giving': 'bg-emerald-100! text-emerald-800!',
+      'youth-ministries': 'bg-purple-100! text-purple-800!',
+      'spiritual-growth': 'bg-indigo-100! text-indigo-800!',
+      'discipleship': 'bg-orange-100! text-orange-800!',
+      'bible-knowledge': 'bg-yellow-100! text-yellow-800!',
+      'apologetics-doctrine': 'bg-red-100! text-red-800!',
+      'leadership-development': 'bg-green-100! text-green-800!',
+      'fellowship-social': 'bg-pink-100! text-pink-800!',
+      'community-outreach': 'bg-cyan-100! text-cyan-800!',
+      'evangelism-mission': 'bg-violet-100! text-violet-800!',
+      'health-lifestyle': 'bg-rose-100! text-rose-800!',
+      'life-skills': 'bg-blue-100! text-blue-800!',
+      'creative-arts': 'bg-fuchsia-100! text-fuchsia-800!',
+      'recreation-sports': 'bg-amber-100! text-amber-800!',
+      'stewardship-service': 'bg-emerald-100! text-emerald-800!',
+      'identity-purpose': 'bg-sky-100! text-sky-800!',
+      'technology-media': 'bg-slate-100! text-slate-800!',
+      'adventist-heritage': 'bg-teal-100! text-teal-800!'
     };
     return colors[type as keyof typeof colors] || 'bg-gray-100! text-gray-800!';
   };
@@ -368,13 +436,47 @@ export default function UpcomingConferences() {
                   onChange={(e) => setTypeFilter(e.target.value)}
                   className="w-full! sm:w-auto! px-3! py-2! border! border-gray-300! rounded-lg! focus:outline-none! focus:ring-2! focus:ring-blue-500! focus:border-blue-500! text-sm!"
                 >
-                  <option value="all">All Types</option>
-                  <option value="leadership">Leadership</option>
-                  <option value="worship">Worship</option>
-                  <option value="youth">Youth</option>
-                  <option value="family">Family</option>
-                  <option value="evangelism">Evangelism</option>
-                  <option value="teaching">Teaching</option>
+                  <option value="all">All Topics</option>
+                  <option value="chaplaincy-ministries">Adventist Chaplaincy Ministries</option>
+                  <option value="family-life">Family Life Ministries</option>
+                  <option value="personal-ministries">Personal Ministries</option>
+                  <option value="disaster-relief">Adventist Disaster Relief Agency</option>
+                  <option value="health-ministries">Health Ministries</option>
+                  <option value="prayer-ministries">Prayer Ministries</option>
+                  <option value="possibility-ministries">Adventist Possibility Ministries</option>
+                  <option value="ministerial-association">Ministerial Association</option>
+                  <option value="publishing-ministries">Publishing Ministries</option>
+                  <option value="laymen-services">Adventist-laymen's Services & Industries</option>
+                  <option value="ministerial-secretary">Ministerial Secretary</option>
+                  <option value="spirit-of-prophecy">Spirit of Prophecy</option>
+                  <option value="children-adolescent">Children & Adolescent Ministries</option>
+                  <option value="mens-ministries">Men's Ministries</option>
+                  <option value="sabbath-school">Sabbath School</option>
+                  <option value="communications">Communications</option>
+                  <option value="public-affairs">Public affairs & Religious Liberty</option>
+                  <option value="stewardship-ministries">Stewardship Ministries</option>
+                  <option value="community-services">Community Services</option>
+                  <option value="campus-ministries">Public Campus Ministries</option>
+                  <option value="womans-ministries">Woman's Ministries</option>
+                  <option value="education">Education</option>
+                  <option value="planned-giving">Planned Giving and Trust Services</option>
+                  <option value="youth-ministries">Youth Ministries</option>
+                  <option value="spiritual-growth">Spiritual Growth</option>
+                  <option value="discipleship">Discipleship</option>
+                  <option value="bible-knowledge">Bible Knowledge</option>
+                  <option value="apologetics-doctrine">Apologetics & Doctrine</option>
+                  <option value="leadership-development">Leadership Development</option>
+                  <option value="fellowship-social">Fellowship & Social</option>
+                  <option value="community-outreach">Community Outreach</option>
+                  <option value="evangelism-mission">Evangelism & Mission</option>
+                  <option value="health-lifestyle">Health & Lifestyle</option>
+                  <option value="life-skills">Life Skills & Career Development</option>
+                  <option value="creative-arts">Creative Arts & Talents</option>
+                  <option value="recreation-sports">Recreation & Sports</option>
+                  <option value="stewardship-service">Stewardship & Service</option>
+                  <option value="identity-purpose">Identity & Purpose</option>
+                  <option value="technology-media">Technology & Media Ministry</option>
+                  <option value="adventist-heritage">Adventist Heritage & Beliefs</option>
                 </select>
               </div>
             </div>
@@ -410,15 +512,49 @@ export default function UpcomingConferences() {
 
         {/* Conference Type Legend */}
         <div className="mt-6! bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-4! sm:p-6! mx-2! sm:mx-0!">
-          <h3 className="text-lg! font-semibold! text-gray-900! mb-3! sm:mb-4!">Conference Types</h3>
+          <h3 className="text-lg! font-semibold! text-gray-900! mb-3! sm:mb-4!">Conference Topics</h3>
           <div className="flex! flex-wrap! gap-3! sm:gap-4!">
             {Object.entries({
-              leadership: 'Leadership',
-              worship: 'Worship',
-              youth: 'Youth',
-              family: 'Family',
-              evangelism: 'Evangelism',
-              teaching: 'Teaching'
+              'chaplaincy-ministries': 'Adventist Chaplaincy Ministries',
+              'family-life': 'Family Life Ministries',
+              'personal-ministries': 'Personal Ministries',
+              'disaster-relief': 'Adventist Disaster Relief Agency',
+              'health-ministries': 'Health Ministries',
+              'prayer-ministries': 'Prayer Ministries',
+              'possibility-ministries': 'Adventist Possibility Ministries',
+              'ministerial-association': 'Ministerial Association',
+              'publishing-ministries': 'Publishing Ministries',
+              'laymen-services': 'Adventist-laymen\'s Services & Industries',
+              'ministerial-secretary': 'Ministerial Secretary',
+              'spirit-of-prophecy': 'Spirit of Prophecy',
+              'children-adolescent': 'Children & Adolescent Ministries',
+              'mens-ministries': 'Men\'s Ministries',
+              'sabbath-school': 'Sabbath School',
+              'communications': 'Communications',
+              'public-affairs': 'Public affairs & Religious Liberty',
+              'stewardship-ministries': 'Stewardship Ministries',
+              'community-services': 'Community Services',
+              'campus-ministries': 'Public Campus Ministries',
+              'womans-ministries': 'Woman\'s Ministries',
+              'education': 'Education',
+              'planned-giving': 'Planned Giving and Trust Services',
+              'youth-ministries': 'Youth Ministries',
+              'spiritual-growth': 'Spiritual Growth',
+              'discipleship': 'Discipleship',
+              'bible-knowledge': 'Bible Knowledge',
+              'apologetics-doctrine': 'Apologetics & Doctrine',
+              'leadership-development': 'Leadership Development',
+              'fellowship-social': 'Fellowship & Social',
+              'community-outreach': 'Community Outreach',
+              'evangelism-mission': 'Evangelism & Mission',
+              'health-lifestyle': 'Health & Lifestyle',
+              'life-skills': 'Life Skills & Career Development',
+              'creative-arts': 'Creative Arts & Talents',
+              'recreation-sports': 'Recreation & Sports',
+              'stewardship-service': 'Stewardship & Service',
+              'identity-purpose': 'Identity & Purpose',
+              'technology-media': 'Technology & Media Ministry',
+              'adventist-heritage': 'Adventist Heritage & Beliefs'
             }).map(([type, label]) => (
               <div key={type} className="flex! items-center! gap-x-2!">
                 <div className={`w-3! h-3! sm:w-4! sm:h-4! rounded! ${getConferenceTypeBadge(type)}`} />

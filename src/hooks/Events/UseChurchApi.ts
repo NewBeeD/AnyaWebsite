@@ -10,7 +10,7 @@ interface ChurchEvent {
   church: string;
   location: string;
   address: string;
-  type: 'financial' | 'relationships' | 'theology' | 'parenting' | 'health' | 'social-issues' | 'spiritual-growth' | 'community';
+  type: 'chaplaincy-ministries' | 'family-life' | 'personal-ministries' | 'disaster-relief' | 'health-ministries' | 'prayer-ministries' | 'possibility-ministries' | 'ministerial-association' | 'publishing-ministries' | 'laymen-services' | 'ministerial-secretary' | 'spirit-of-prophecy' | 'children-adolescent' | 'mens-ministries' | 'sabbath-school' | 'communications' | 'public-affairs' | 'stewardship-ministries' | 'community-services' | 'campus-ministries' | 'womans-ministries' | 'education' | 'planned-giving' | 'youth-ministries' | 'spiritual-growth' | 'discipleship' | 'bible-knowledge' | 'apologetics-doctrine' | 'leadership-development' | 'fellowship-social' | 'community-outreach' | 'evangelism-mission' | 'health-lifestyle' | 'life-skills' | 'creative-arts' | 'recreation-sports' | 'stewardship-service' | 'identity-purpose' | 'technology-media' | 'adventist-heritage';
   description: string;
   targetAudience: string;
   cost: 'free' | 'paid';
@@ -58,7 +58,7 @@ export default function useCalendarApi(): ChurchApiResult {
       costAmount: item.CostAmount,
       registrationRequired: item.RegistrationRequired,
       registrationLink: item.RegistrationLink,
-      tags: item.Tags.tags,
+      tags: Array.isArray(item.Tags) ? item.Tags : (typeof item.Tags === 'string' ? item.Tags.split(',').map(t => t.trim()) : []),
       featured: item.Featured,
       contactPerson: item.ContactPerson,
       contactEmail: item.ContactEmail,

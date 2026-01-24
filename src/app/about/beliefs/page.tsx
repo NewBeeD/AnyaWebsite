@@ -205,7 +205,7 @@ export default function BeliefsPage() {
       </section>
 
       {/* Salvation & Grace */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-700 text-white">
+      <section className="py-16! bg-gradient-to-r from-blue-600 to-purple-700 text-white">
         <div className="container mx-auto! px-4! max-w-4xl text-center">
           <h2 className="text-3xl font-bold mb-6!">Salvation by Grace Through Faith</h2>
           <div className="bg-white/10 rounded-2xl p-8! backdrop-blur-sm">

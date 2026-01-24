@@ -5,6 +5,9 @@ import Autoplay from 'embla-carousel-autoplay'
 import Image from 'next/image'
 import { useCallback, useEffect, useState } from 'react'
 
+
+import UseFeatureEventApi from '@/hooks/Events/UseFeatureEventApi'
+
 const featuredEvents = [
   {
     id: 1,
@@ -37,6 +40,11 @@ const featuredEvents = [
 ];
 
 export default function FeaturedEventsCarousel() {
+
+  const { events, loading, error } = UseFeatureEventApi();
+
+  const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || 'http://localhost:1337';
+  
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay({ delay: 2500 })])
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([])
@@ -84,7 +92,7 @@ export default function FeaturedEventsCarousel() {
 
           <div className="embla__container flex">
             
-            {featuredEvents.map((item, idx) => (
+            {events.map((item, idx) => (
               
               <div className="embla__slide flex-[0_0_100%] min-w-0" key={idx}>
 
@@ -94,7 +102,7 @@ export default function FeaturedEventsCarousel() {
                   <div className="md:w-2/5">
                     <div className="relative aspect-video bg-gradient-to-br from-indigo-100 to-blue-100 rounded-lg overflow-hidden">
                       <Image 
-                        src={item.image} 
+                        src={baseUrl + item.image} 
                         alt={item.title}
                         fill
                         sizes="(max-width: 768px) 100vw, 40vw"

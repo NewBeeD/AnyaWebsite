@@ -1,0 +1,5 @@
+--turbopack
+
+
+
+add to json build and start: 'npm start --turbopack'

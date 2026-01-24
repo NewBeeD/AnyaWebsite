@@ -95,6 +95,51 @@ export const useStrapi = () => {
 
 
 // hooks/useStrapi.js
+// export const useStrapiQuery = (endpoint, options = {}) => {
+//   const [data, setData] = useState(null);
+//   const [loading, setLoading] = useState(true);
+//   const [error, setError] = useState(null);
+
+//   useEffect(() => {
+//     const fetchData = async () => {
+//       try {
+//         setLoading(true);
+//         setError(null);
+        
+//         const url = `${STRAPI_API_URL}${endpoint}`;
+//         const response = await fetch(url, {
+//           headers: {
+//             'Content-Type': 'application/json',
+//             ...(options.headers || {}),
+//           },
+//           ...options,
+//         });
+
+//         if (!response.ok) {
+//           throw new Error(`HTTP error! status: ${response.status}`);
+//         }
+
+//         const result = await response.json();
+//         setData(result);
+//       } catch (err) {
+//         const errorMessage = err instanceof Error ? err.message : 'An unknown error occurred';
+//         setError(errorMessage);
+//       } finally {
+//         setLoading(false);
+//       }
+//     };
+
+//     fetchData();
+//   }, [endpoint]); // Remove options from dependencies
+  
+
+//   return { data, loading, error };
+// };
+
+
+
+
+
 export const useStrapiQuery = (endpoint, options = {}) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -106,8 +151,22 @@ export const useStrapiQuery = (endpoint, options = {}) => {
         setLoading(true);
         setError(null);
         
-        const url = `${STRAPI_API_URL}${endpoint}`;
-        const response = await fetch(url, {
+        // Add populate parameter to get images
+        const baseUrl = `${STRAPI_API_URL}${endpoint}`;
+        const url = new URL(baseUrl);
+        
+        // Check if endpoint already has query params
+        const hasExistingParams = endpoint.includes('?');
+        
+        // Add populate parameter if not already present
+        if (!hasExistingParams || !endpoint.includes('populate=')) {
+          // Populate all relations deeply
+          url.searchParams.append('populate', '*');
+          // OR for specific fields (more efficient):
+          // url.searchParams.append('populate', 'image,images,category.image');
+        }
+        
+        const response = await fetch(url.toString(), {
           headers: {
             'Content-Type': 'application/json',
             ...(options.headers || {}),
@@ -130,8 +189,7 @@ export const useStrapiQuery = (endpoint, options = {}) => {
     };
 
     fetchData();
-  }, [endpoint]); // Remove options from dependencies
-  
+  }, [endpoint]);
 
   return { data, loading, error };
 };

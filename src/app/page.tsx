@@ -32,7 +32,7 @@ export default function Home() {
 
       <Section1 />
       <QuickStats />
-      <ImmediateValueSection />
+      {/* <ImmediateValueSection /> */}
       {/* <KeyAudiences /> */}
       <EventCategories />
       <EventHighlights />

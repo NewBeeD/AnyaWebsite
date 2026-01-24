@@ -9,14 +9,11 @@ import Link from 'next/link';
 export default function EventGalleryPage() {
   const params = useParams();
 
-  console.log(params);
+
   
   const router = useRouter();
   const eventId = params.slug as string;
-
-
-  console.log('eventId: ', eventId);
-  
+ 
   
   const { getEventById, loading } = UseGalleryApi();
   const [event, setEvent] = useState<GalleryEvent | null>(null);

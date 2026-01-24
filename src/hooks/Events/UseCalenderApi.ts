@@ -20,7 +20,7 @@ interface CalendarApiResult {
 export default function useCalendarApi(): CalendarApiResult {
   const { data, loading, error } = useStrapiQuery('/events');
 
- console.log('Here is the data', data);
+ 
  
 
   if (loading || error || !data) {
