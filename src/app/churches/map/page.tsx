@@ -3,6 +3,24 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import dynamic from 'next/dynamic';
+import { churchData } from '@/data/churchData';
+
+// Dynamically import the Leaflet map component to avoid SSR issues
+const LeafletMap = dynamic(
+  () => import('@/components/ChurchMap/LeafletMap'),
+  { 
+    ssr: false,
+    loading: () => (
+      <div className="h-96 bg-gradient-to-br from-blue-100 to-green-100 flex items-center justify-center rounded-lg">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading interactive map...</p>
+        </div>
+      </div>
+    )
+  }
+);
 
 // Define interfaces for TypeScript
 interface Church {
@@ -39,365 +57,8 @@ export default function InteractiveMapPage() {
   const [userLocation, setUserLocation] = useState<UserLocation | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
 
-  // Sample church data with coordinates for Dominica and Barbados
-  const churches: Church[] = [
-    // Dominica - Northern Region
-    {
-      id: 1,
-      name: "Portsmouth SDA Church",
-      pastor: "Pastor Michael Laurent",
-      address: "Church Street, Portsmouth, Dominica",
-      phone: "+1 (767) 445-1001",
-      email: "portsmouthsda@anyadominica.org",
-      country: "dominica",
-      region: "north",
-      coordinates: { lat: 15.5763, lng: -61.4556 },
-      services: { sabbath: "Saturday 9:30 AM", prayer: "Wednesday 7:00 PM" },
-      type: "church"
-    },
-    {
-      id: 2,
-      name: "Calibishie SDA Church",
-      pastor: "Pastor David Thomas",
-      address: "Main Road, Calibishie, Dominica",
-      phone: "+1 (767) 445-1002",
-      email: "calibishiesda@anyadominica.org",
-      country: "dominica",
-      region: "north",
-      coordinates: { lat: 15.5928, lng: -61.3419 },
-      services: { sabbath: "Saturday 9:00 AM", prayer: "Tuesday 7:00 PM" },
-      type: "church"
-    },
-    {
-      id: 3,
-      name: "Wesley SDA Church",
-      pastor: "Pastor James Pascal",
-      address: "Wesley Village, Dominica",
-      phone: "+1 (767) 445-1003",
-      email: "wesleysda@anyadominica.org",
-      country: "dominica",
-      region: "north",
-      coordinates: { lat: 15.5678, lng: -61.3167 },
-      services: { sabbath: "Saturday 10:00 AM", prayer: "Thursday 6:30 PM" },
-      type: "church"
-    },
-
-    // Dominica - Southern Region
-    {
-      id: 4,
-      name: "Grand Bay SDA Church",
-      pastor: "Pastor Sarah Matthew",
-      address: "Grand Bay Village, Dominica",
-      phone: "+1 (767) 446-1001",
-      email: "grandbaysda@anyadominica.org",
-      country: "dominica",
-      region: "south",
-      coordinates: { lat: 15.2333, lng: -61.3167 },
-      services: { sabbath: "Saturday 8:30 AM", prayer: "Wednesday 6:00 PM" },
-      type: "church"
-    },
-    {
-      id: 5,
-      name: "Scott's Head SDA Church",
-      pastor: "Pastor Mark Green",
-      address: "Scott's Head Village, Dominica",
-      phone: "+1 (767) 446-1002",
-      email: "scottsheadsda@anyadominica.org",
-      country: "dominica",
-      region: "south",
-      coordinates: { lat: 15.2125, lng: -61.2667 },
-      services: { sabbath: "Saturday 9:00 AM", prayer: "Tuesday 7:00 PM" },
-      type: "church"
-    },
-
-    // Dominica - Eastern Region
-    {
-      id: 6,
-      name: "Marigot SDA Church",
-      pastor: "Pastor Lisa Williams",
-      address: "Marigot Village, Dominica",
-      phone: "+1 (767) 447-1001",
-      email: "marigotsda@anyadominica.org",
-      country: "dominica",
-      region: "east",
-      coordinates: { lat: 15.5333, lng: -61.2833 },
-      services: { sabbath: "Saturday 9:30 AM", prayer: "Wednesday 7:00 PM" },
-      type: "church"
-    },
-    {
-      id: 7,
-      name: "Rosalie SDA Church",
-      pastor: "Pastor Daniel Roberts",
-      address: "Rosalie Village, Dominica",
-      phone: "+1 (767) 447-1002",
-      email: "rosaliesda@anyadominica.org",
-      country: "dominica",
-      region: "east",
-      coordinates: { lat: 15.3667, lng: -61.2667 },
-      services: { sabbath: "Saturday 8:00 AM", prayer: "Thursday 6:00 PM" },
-      type: "church"
-    },
-
-    // Dominica - Western Region
-    {
-      id: 8,
-      name: "Roseau Central SDA Church",
-      pastor: "Pastor Maria John",
-      address: "Victoria Street, Roseau, Dominica",
-      phone: "+1 (767) 448-1001",
-      email: "roseaucentralsda@anyadominica.org",
-      country: "dominica",
-      region: "west",
-      coordinates: { lat: 15.3017, lng: -61.3875 },
-      services: { sabbath: "Saturday 9:00 AM & 11:00 AM", prayer: "Wednesday 7:00 PM" },
-      type: "church"
-    },
-    {
-      id: 9,
-      name: "Canefield SDA Church",
-      pastor: "Pastor Peter Henderson",
-      address: "Canefield, Dominica",
-      phone: "+1 (767) 448-1002",
-      email: "canefieldsda@anyadominica.org",
-      country: "dominica",
-      region: "west",
-      coordinates: { lat: 15.3333, lng: -61.3833 },
-      services: { sabbath: "Saturday 9:30 AM", prayer: "Tuesday 7:00 PM" },
-      type: "church"
-    },
-    {
-      id: 10,
-      name: "Goodwill SDA Church",
-      pastor: "Pastor Rachel Joseph",
-      address: "Goodwill, Roseau, Dominica",
-      phone: "+1 (767) 448-1003",
-      email: "goodwillsda@anyadominica.org",
-      country: "dominica",
-      region: "west",
-      coordinates: { lat: 15.3167, lng: -61.3833 },
-      services: { sabbath: "Saturday 10:00 AM", prayer: "Thursday 6:30 PM" },
-      type: "church"
-    },
-
-    // Dominica - Central Region
-    {
-      id: 11,
-      name: "St. Joseph SDA Church",
-      pastor: "Pastor Samuel Charles",
-      address: "St. Joseph Village, Dominica",
-      phone: "+1 (767) 449-1001",
-      email: "stjosephsda@anyadominica.org",
-      country: "dominica",
-      region: "central",
-      coordinates: { lat: 15.4000, lng: -61.4333 },
-      services: { sabbath: "Saturday 9:00 AM", prayer: "Wednesday 6:30 PM" },
-      type: "church"
-    },
-    {
-      id: 12,
-      name: "Morne Prosper SDA Church",
-      pastor: "Pastor Angela Frederick",
-      address: "Morne Prosper, Dominica",
-      phone: "+1 (767) 449-1002",
-      email: "morneprosper@anyadominica.org",
-      country: "dominica",
-      region: "central",
-      coordinates: { lat: 15.3500, lng: -61.3667 },
-      services: { sabbath: "Saturday 10:00 AM", prayer: "Tuesday 7:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. Michael Parish
-    {
-      id: 101,
-      name: "King Street SDA Church",
-      pastor: "Pastor William Thompson",
-      address: "King Street, Bridgetown, Barbados",
-      phone: "+1 (246) 426-1001",
-      email: "kingstreetsda@anyabarbados.org",
-      country: "barbados",
-      region: "st_michael",
-      coordinates: { lat: 13.0975, lng: -59.6161 },
-      services: { sabbath: "Saturday 8:30 AM & 11:00 AM", prayer: "Wednesday 7:30 PM" },
-      type: "church"
-    },
-    {
-      id: 102,
-      name: "Warrens SDA Church",
-      pastor: "Pastor Angela Forde",
-      address: "Warrens, St. Michael, Barbados",
-      phone: "+1 (246) 426-1002",
-      email: "warrenssda@anyabarbados.org",
-      country: "barbados",
-      region: "st_michael",
-      coordinates: { lat: 13.1000, lng: -59.5833 },
-      services: { sabbath: "Saturday 9:00 AM", prayer: "Tuesday 7:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - Christ Church Parish
-    {
-      id: 103,
-      name: "Oistins SDA Church",
-      pastor: "Pastor Robert Clarke",
-      address: "Oistins, Christ Church, Barbados",
-      phone: "+1 (246) 428-1001",
-      email: "oistinssda@anyabarbados.org",
-      country: "barbados",
-      region: "christ_church",
-      coordinates: { lat: 13.0667, lng: -59.5333 },
-      services: { sabbath: "Saturday 8:00 AM", prayer: "Thursday 6:30 PM" },
-      type: "church"
-    },
-    {
-      id: 104,
-      name: "Silver Sands SDA Church",
-      pastor: "Pastor Jennifer Simmons",
-      address: "Silver Sands, Christ Church, Barbados",
-      phone: "+1 (246) 428-1002",
-      email: "silversandssda@anyabarbados.org",
-      country: "barbados",
-      region: "christ_church",
-      coordinates: { lat: 13.0500, lng: -59.5167 },
-      services: { sabbath: "Saturday 10:00 AM", prayer: "Wednesday 7:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. James Parish
-    {
-      id: 105,
-      name: "Holetown SDA Church",
-      pastor: "Pastor David Worrell",
-      address: "Holetown, St. James, Barbados",
-      phone: "+1 (246) 432-1001",
-      email: "holetownsda@anyabarbados.org",
-      country: "barbados",
-      region: "st_james",
-      coordinates: { lat: 13.1833, lng: -59.6500 },
-      services: { sabbath: "Saturday 9:30 AM", prayer: "Tuesday 7:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. George Parish
-    {
-      id: 106,
-      name: "Glebe SDA Church",
-      pastor: "Pastor Sandra White",
-      address: "Glebe, St. George, Barbados",
-      phone: "+1 (246) 437-1001",
-      email: "glebesda@anyabarbados.org",
-      country: "barbados",
-      region: "st_george",
-      coordinates: { lat: 13.1500, lng: -59.5667 },
-      services: { sabbath: "Saturday 8:30 AM", prayer: "Wednesday 7:30 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. Thomas Parish
-    {
-      id: 107,
-      name: "Welchman Hall SDA Church",
-      pastor: "Pastor Mark Alleyne",
-      address: "Welchman Hall, St. Thomas, Barbados",
-      phone: "+1 (246) 438-1001",
-      email: "welchmanhallsda@anyabarbados.org",
-      country: "barbados",
-      region: "st_thomas",
-      coordinates: { lat: 13.1667, lng: -59.5833 },
-      services: { sabbath: "Saturday 9:00 AM", prayer: "Thursday 7:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. Peter Parish
-    {
-      id: 108,
-      name: "Speightstown SDA Church",
-      pastor: "Pastor Charles Bynoe",
-      address: "Speightstown, St. Peter, Barbados",
-      phone: "+1 (246) 439-1001",
-      email: "speightstownsda@anyabarbados.org",
-      country: "barbados",
-      region: "st_peter",
-      coordinates: { lat: 13.2500, lng: -59.6500 },
-      services: { sabbath: "Saturday 10:00 AM", prayer: "Tuesday 6:30 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. Andrew Parish
-    {
-      id: 109,
-      name: "Belleplaine SDA Church",
-      pastor: "Pastor Elizabeth Holder",
-      address: "Belleplaine, St. Andrew, Barbados",
-      phone: "+1 (246) 433-1001",
-      email: "belleplainesda@anyabarbados.org",
-      country: "barbados",
-      region: "st_andrew",
-      coordinates: { lat: 13.2000, lng: -59.5667 },
-      services: { sabbath: "Saturday 8:00 AM", prayer: "Wednesday 6:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. Joseph Parish
-    {
-      id: 110,
-      name: "Bathsheba SDA Church",
-      pastor: "Pastor George Moore",
-      address: "Bathsheba, St. Joseph, Barbados",
-      phone: "+1 (246) 433-1002",
-      email: "bathshebasda@anyabarbados.org",
-      country: "barbados",
-      region: "st_joseph",
-      coordinates: { lat: 13.2167, lng: -59.5333 },
-      services: { sabbath: "Saturday 9:30 AM", prayer: "Thursday 7:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. John Parish
-    {
-      id: 111,
-      name: "Four Roads SDA Church",
-      pastor: "Pastor Patricia King",
-      address: "Four Roads, St. John, Barbados",
-      phone: "+1 (246) 433-1003",
-      email: "fourroadssda@anyabarbados.org",
-      country: "barbados",
-      region: "st_john",
-      coordinates: { lat: 13.1667, lng: -59.5000 },
-      services: { sabbath: "Saturday 10:00 AM", prayer: "Wednesday 7:30 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. Philip Parish
-    {
-      id: 112,
-      name: "Six Roads SDA Church",
-      pastor: "Pastor Andrew Griffith",
-      address: "Six Roads, St. Philip, Barbados",
-      phone: "+1 (246) 423-1001",
-      email: "sixroadssda@anyabarbados.org",
-      country: "barbados",
-      region: "st_philip",
-      coordinates: { lat: 13.1167, lng: -59.4667 },
-      services: { sabbath: "Saturday 9:00 AM", prayer: "Tuesday 7:00 PM" },
-      type: "church"
-    },
-
-    // Barbados - St. Lucy Parish
-    {
-      id: 113,
-      name: "Checker Hall SDA Church",
-      pastor: "Pastor Sandra Brathwaite",
-      address: "Checker Hall, St. Lucy, Barbados",
-      phone: "+1 (246) 439-1002",
-      email: "checkerhallsda@anyabarbados.org",
-      country: "barbados",
-      region: "st_lucy",
-      coordinates: { lat: 13.2833, lng: -59.6333 },
-      services: { sabbath: "Saturday 8:30 AM", prayer: "Wednesday 7:00 PM" },
-      type: "church"
-    }
-  ];
+  // Import church data from centralized data file
+  const churches = churchData;
 
   const dominicaRegions: Region[] = [
     { id: 'all', name: 'All Regions', color: 'blue', count: churches.filter(c => c.country === 'dominica').length, country: 'dominica' },
@@ -749,84 +410,14 @@ export default function InteractiveMapPage() {
                   </div>
                 </div>
 
-                {/* Interactive Map Visualization */}
-                <div className="relative bg-gradient-to-br from-blue-100 to-green-100 h-96 p-8!">
-                  {/* Island Outline */}
-                  <div className={`absolute inset-8 rounded-2xl border-4 shadow-lg ${
-                    selectedCountry === 'dominica' 
-                      ? 'bg-green-200 border-green-300' 
-                      : 'bg-yellow-200 border-yellow-300'
-                  }`}>
-                    
-                    {/* Map Points */}
-                    {filteredChurches.map(church => {
-                      const position = getPositionOnMap(church.coordinates.lat, church.coordinates.lng);
-                      return (
-                        <button
-                          key={church.id}
-                          onClick={() => setSelectedChurch(church)}
-                          className={`absolute transform -translate-x-1/2 -translate-y-1/2 transition-all duration-200 z-10 ${
-                            selectedChurch?.id === church.id ? 'scale-125' : 'hover:scale-110'
-                          }`}
-                          style={{
-                            left: position.left,
-                            top: position.top
-                          }}
-                        >
-                          <div 
-                            className="w-6 h-6 rounded-full border-2 border-white shadow-lg flex items-center justify-center"
-                            style={{ backgroundColor: getRegionColor(church.region) }}
-                          >
-                            {selectedChurch?.id === church.id && (
-                              <div className="w-2 h-2 bg-white rounded-full"></div>
-                            )}
-                          </div>
-                        </button>
-                      );
-                    })}
-
-                    {/* User Location Marker */}
-                    {userLocation && (
-                      <div
-                        className="absolute w-4 h-4 bg-green-500 rounded-full border-2 border-white shadow-lg animate-pulse transform -translate-x-1/2 -translate-y-1/2 z-20"
-                        style={getPositionOnMap(userLocation.lat, userLocation.lng)}
-                      ></div>
-                    )}
-                  </div>
-
-                  {/* Country Indicator */}
-                  <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3! shadow-lg">
-                    <div className="flex items-center">
-                      <div className="text-2xl mr-2!">
-                        {selectedCountry === 'dominica' ? '🇩🇲' : '🇧🇧'}
-                      </div>
-                      <div>
-                        <div className="font-semibold text-gray-900">{getCountryName()}</div>
-                        <div className="text-xs text-gray-600">{filteredChurches.length} churches shown</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Map Legend */}
-                  <div className="absolute bottom-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-4! shadow-lg">
-                    <h4 className="font-semibold text-gray-900 text-sm mb-2!">
-                      {selectedCountry === 'dominica' ? 'Regions' : 'Parishes'}
-                    </h4>
-                    <div className="space-y-1! text-xs max-h-32 overflow-y-auto">
-                      {getRegions()
-                        .filter(r => r.id !== 'all')
-                        .map(region => (
-                          <div key={region.id} className="flex items-center">
-                            <div 
-                              className="w-3 h-3 rounded-full mr-2"
-                              style={{ backgroundColor: getRegionColor(region.id) }}
-                            ></div>
-                            <span className="text-gray-700">{region.name}</span>
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                </div>
+                {/* Interactive Leaflet Map */}
+                <LeafletMap
+                  churches={churches}
+                  selectedChurch={selectedChurch}
+                  onChurchSelect={setSelectedChurch}
+                  selectedCountry={selectedCountry}
+                  userLocation={userLocation}
+                />
 
                 {/* Selected Church Details */}
                 {selectedChurch && (

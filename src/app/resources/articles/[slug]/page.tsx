@@ -155,6 +155,7 @@
 // app/articles/[slug]/page.tsx
 'use client';
 
+import React from 'react';
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import useArticleApi from '@/hooks/Resources/useArticleApi';
@@ -220,7 +221,7 @@ const blocksRendererConfig = {
       6: 'text-base font-semibold mt-3! mb-2!',
     };
     
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+    const Tag = `h${level}` as any;
     return (
       <Tag className={`${baseClasses} ${levelClasses[level as keyof typeof levelClasses]}`}>
         {children}

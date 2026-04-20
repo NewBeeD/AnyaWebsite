@@ -2,28 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import UseConfernceApi from '@/hooks/Events/UseConferenceApi'
+import UseConfernceApi, { Conference } from '@/hooks/Events/UseConferenceApi'
 import Link from 'next/link';
-
-interface Conference {
-  id: string;
-  title: string;
-  date: Date;
-  endDate: Date;
-  location: string;
-  venue: string;
-  hostChurch: string;
-  type: 'chaplaincy-ministries' | 'family-life' | 'personal-ministries' | 'disaster-relief' | 'health-ministries' | 'prayer-ministries' | 'possibility-ministries' | 'ministerial-association' | 'publishing-ministries' | 'laymen-services' | 'ministerial-secretary' | 'spirit-of-prophecy' | 'children-adolescent' | 'mens-ministries' | 'sabbath-school' | 'communications' | 'public-affairs' | 'stewardship-ministries' | 'community-services' | 'campus-ministries' | 'womans-ministries' | 'education' | 'planned-giving' | 'youth-ministries' | 'spiritual-growth' | 'discipleship' | 'bible-knowledge' | 'apologetics-doctrine' | 'leadership-development' | 'fellowship-social' | 'community-outreach' | 'evangelism-mission' | 'health-lifestyle' | 'life-skills' | 'creative-arts' | 'recreation-sports' | 'stewardship-service' | 'identity-purpose' | 'technology-media' | 'adventist-heritage';
-  description: string;
-  speakers: string[];
-  registrationFee: number;
-  registrationLink: string;
-  capacity: number;
-  registeredCount: number;
-  image?: string;
-  tags: string[];
-  country: string;
-}
 
 export default function UpcomingConferences() {
   const {events: conferences, loading, error} = UseConfernceApi()

@@ -1,0 +1,177 @@
+{
+  "kind": "collectionType",
+  "collectionName": "church_programs",
+  "info": {
+    "singularName": "church-program",
+    "pluralName": "church-programs",
+    "displayName": "Church Program",
+    "description": "Special programs that churches host for visitors and members"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Title": {
+      "type": "string",
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Title",
+      "required": true
+    },
+    "Description": {
+      "type": "richtext",
+      "required": true
+    },
+    "ShortDescription": {
+      "type": "text",
+      "maxLength": 300
+    },
+    "ProgramDate": {
+      "type": "date",
+      "required": true
+    },
+    "EndDate": {
+      "type": "date"
+    },
+    "StartTime": {
+      "type": "time"
+    },
+    "EndTime": {
+      "type": "time"
+    },
+    "IsRecurring": {
+      "type": "boolean",
+      "default": false
+    },
+    "RecurrencePattern": {
+      "type": "enumeration",
+      "enum": [
+        "weekly",
+        "bi-weekly",
+        "monthly",
+        "quarterly",
+        "annually"
+      ]
+    },
+    "ProgramType": {
+      "type": "enumeration",
+      "enum": [
+        "worship_service",
+        "prayer_meeting",
+        "bible_study",
+        "youth_program",
+        "childrens_program",
+        "health_seminar",
+        "evangelistic_series",
+        "concert",
+        "community_service",
+        "workshop",
+        "retreat",
+        "camp_meeting",
+        "special_service",
+        "other"
+      ],
+      "required": true
+    },
+    "HostChurch": {
+      "type": "string",
+      "required": true
+    },
+    "ChurchAddress": {
+      "type": "string"
+    },
+    "Country": {
+      "type": "enumeration",
+      "enum": [
+        "dominica",
+        "barbados",
+        "both"
+      ],
+      "required": true
+    },
+    "Region": {
+      "type": "string"
+    },
+    "CoverImage": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Gallery": {
+      "type": "media",
+      "multiple": true,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Speakers": {
+      "type": "json"
+    },
+    "TargetAudience": {
+      "type": "enumeration",
+      "enum": [
+        "all_ages",
+        "youth",
+        "children",
+        "adults",
+        "seniors",
+        "families",
+        "men",
+        "women",
+        "singles",
+        "couples"
+      ],
+      "default": "all_ages"
+    },
+    "IsFree": {
+      "type": "boolean",
+      "default": true
+    },
+    "Cost": {
+      "type": "decimal"
+    },
+    "RegistrationRequired": {
+      "type": "boolean",
+      "default": false
+    },
+    "RegistrationLink": {
+      "type": "string"
+    },
+    "ContactPerson": {
+      "type": "string"
+    },
+    "ContactEmail": {
+      "type": "email"
+    },
+    "ContactPhone": {
+      "type": "string"
+    },
+    "Featured": {
+      "type": "boolean",
+      "default": false
+    },
+    "Tags": {
+      "type": "json"
+    },
+    "Ministries": {
+      "type": "string"
+    },
+    "ExpectedAttendance": {
+      "type": "integer"
+    },
+    "LiveStreamLink": {
+      "type": "string"
+    },
+    "IsVirtual": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

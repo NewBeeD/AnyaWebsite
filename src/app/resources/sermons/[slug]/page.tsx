@@ -1,32 +1,11 @@
 // app/sermons/[slug]/page.tsx
-'use client';
+ 'use client';
 
 import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import useSermonApi from '@/hooks/Resources/useSermonsApi';
+import useSermonApi, { Sermon } from '@/hooks/Resources/useSermonsApi';
 import Link from 'next/link';
 import { BlocksRenderer } from '@strapi/blocks-react-renderer';
-
-interface Sermon {
-  id: string;
-  title: string;
-  preacher: string;
-  church: string;
-  date: Date;
-  scripture: string;
-  series: string;
-  seriesPart?: number;
-  description: string;
-  content: any;
-  readingTime: string;
-  tags: string[];
-  viewCount: number;
-  likeCount: number;
-  downloadCount: number;
-  language: 'english' | 'spanish' | 'french' | 'creole';
-  format: 'article' | 'transcript' | 'outline' | 'study-guide';
-  slug: string;
-}
 
 // Define proper TypeScript interfaces for the block props
 interface HeadingBlockProps {
@@ -66,7 +45,7 @@ const blocksRendererConfig = {
       6: 'text-base! font-semibold! mt-3! mb-2!',
     };
     
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+    const Tag = `h${level}` as any;
     return (
       <Tag className={`${baseClasses} ${levelClasses[level as keyof typeof levelClasses]}`}>
         {children}

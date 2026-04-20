@@ -1,20 +1,23 @@
 'use client';
 
-import { useStrapiQuery } from '@/hooks/Events/UseEventsApi';
+import { useMemo } from 'react';
+import useCalendarApi, { CalendarEvent } from '@/hooks/Events/UseCalenderApi';
 
-interface YouthEvent {
+export interface YouthEvent {
   id: string;
   title: string;
   date: Date;
+  endDate?: Date;
   location: string;
   church: string;
-  type: 'camp' | 'workshop' | 'retreat' | 'conference' | 'social' | 'mission';
+  type: string;
   description: string;
   ageGroup: string;
   registrationRequired: boolean;
   registrationLink?: string;
   image?: string;
   country: string;
+  ministries?: string;
 }
 
 interface YouthApiResult {
@@ -23,34 +26,32 @@ interface YouthApiResult {
   error: any;
 }
 
-export default function useCalendarApi(): YouthApiResult {
+export default function UseYouthApi(): YouthApiResult {
+  const { events: allEvents, loading, error } = useCalendarApi();
 
-  // const { data, loading, error } = useStrapiQuery('/events?populate=*');
-  // Filter at the API level instead of client-side
-  const { data, loading, error } = useStrapiQuery('/events?populate=*&filters[EventCategory][$eq]=youth');
+  const events = useMemo(() => {
+    if (!allEvents || allEvents.length === 0) return [];
 
-
-  if (loading || error || !data) {
-    return { events: [], loading, error };
-  }
-
-  const events =
-    data?.data?.map((item: any) => ({
-      id: item.id,
-      title: item.Title ?? 'Untitled Event',
-      date: new Date(item.Date),
-      location: item.Location,
-      church: item.Church ?? 'Unknown Church',
-      type: item.EventType,
-      description: item.Description ?? 'No description',
-      registrationRequired: item.RegistrationRequired,
-      registrationLink: item.RegistrationLink,
-      ageGroup: item.AgeGroup,
-      image: item.Image,
-      country: item.Country ?? 'Dominica',
-
-    })) ?? [];
- 
+    // Filter events with type 'youth'
+    return allEvents
+      .filter((event: CalendarEvent) => event.type === 'youth')
+      .map((event: CalendarEvent): YouthEvent => ({
+        id: event.id,
+        title: event.title,
+        date: event.date,
+        endDate: event.endDate,
+        location: event.country || 'ECC',
+        church: event.church || 'ECC',
+        type: event.ministries || 'youth-ministries',
+        description: event.description || 'Youth event',
+        ageGroup: 'Youth',
+        registrationRequired: false,
+        registrationLink: '',
+        image: event.image || '',
+        country: event.country || 'All',
+        ministries: event.ministries
+      }));
+  }, [allEvents]);
 
   return { events, loading, error };
 }

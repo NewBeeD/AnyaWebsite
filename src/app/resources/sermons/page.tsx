@@ -2,30 +2,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import useSermonApi from '@/hooks/Resources/useSermonsApi'
+import useSermonApi, { Sermon } from '@/hooks/Resources/useSermonsApi'
 
 import Link from 'next/link';
-
-interface Sermon {
-  id: string;
-  title: string;
-  preacher: string;
-  church: string;
-  date: Date;
-  scripture: string;
-  series: string;
-  seriesPart?: number;
-  description: string;
-  content: string;
-  readingTime: string;
-  tags: string[];
-  viewCount: number;
-  likeCount: number;
-  downloadCount: number;
-  language: 'english' | 'spanish' | 'french' | 'creole';
-  format: 'article' | 'transcript' | 'outline' | 'study-guide';
-  slug: string;
-}
 
 export default function Sermons() {
 

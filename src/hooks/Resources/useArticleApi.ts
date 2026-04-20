@@ -67,11 +67,11 @@ export default function useCalendarApi(): ArticleApiResult {
 }
 
 
-function LowerCase(point){
-
-  return point.toLowerCase();
-
+function LowerCase(point: any): string {
+  if (point == null) return '';
+  return String(point).toLowerCase();
 }
+
 
 
 

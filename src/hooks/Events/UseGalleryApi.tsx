@@ -1,5 +1,8 @@
 // hooks/Events/UseGalleryApi.ts
+'use client';
+
 import { useState, useEffect } from 'react';
+import { useStrapiQuery } from '@/hooks/Events/UseEventsApi';
 
 export interface EventImage {
   id: string;
@@ -14,7 +17,8 @@ export interface EventImage {
 export interface GalleryEvent {
   id: string;
   name: string;
-  eventType: 'conference' | 'worship' | 'youth' | 'leadership' | 'community' | 'mission' | 'other';
+  slug?: string;
+  eventType: 'conference' | 'worship' | 'youth' | 'leadership' | 'community' | 'mission' | 'camp-meeting' | 'retreat' | 'workshop' | 'evangelism' | 'other';
   date: Date;
   endDate?: Date;
   location: string;
@@ -22,13 +26,15 @@ export interface GalleryEvent {
   description: string;
   venue: string;
   images: EventImage[];
+  coverImage?: string;
   tags: string[];
   speakers?: string[];
   attendeesCount?: number;
   featured?: boolean;
   hostChurch?: string;
-  registrationCount?: number;
-  capacity?: number;
+  photographer?: string;
+  videoLinks?: string[];
+  source?: 'strapi' | 'mock';
 }
 
 const mockEventsData: GalleryEvent[] = [
@@ -137,35 +143,95 @@ const mockEventsData: GalleryEvent[] = [
   // Add more events as needed...
 ];
 
+const STRAPI_BASE_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL?.replace('/api', '') || 'https://anyabacken.onrender.com';
+
 const UseGalleryApi = () => {
-  const [events, setEvents] = useState<GalleryEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  // Fetch from Strapi
+  const { data, loading: strapiLoading, error: strapiError }: any = useStrapiQuery('/events-galleries?populate=*');
 
-  useEffect(() => {
-    const fetchEventsData = async () => {
-      try {
-        // Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 800));
-        
-        setEvents(mockEventsData);
-      } catch (err) {
-        setError('Failed to load events gallery');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
+  // Map event type from Strapi to our format
+  const mapEventType = (type: string): GalleryEvent['eventType'] => {
+    const typeMap: Record<string, GalleryEvent['eventType']> = {
+      'Conference': 'conference',
+      'Worship': 'worship',
+      'Youth': 'youth',
+      'Leadership': 'leadership',
+      'Community': 'community',
+      'Mission': 'mission',
+      'Camp Meeting': 'camp-meeting',
+      'Retreat': 'retreat',
+      'Workshop': 'workshop',
+      'Evangelism': 'evangelism',
+      'Other': 'other'
     };
-
-    fetchEventsData();
-  }, []);
-
-  // Function to get a single event by ID
-  const getEventById = (id: string): GalleryEvent | undefined => {
-    return events.find(event => event.id === id);
+    return typeMap[type] || 'other';
   };
 
-  return { events, loading, error, getEventById };
+  // Transform Strapi data to our format
+  const strapiEvents: GalleryEvent[] = data?.data?.map((item: any) => {
+    // Process images array from Strapi
+    const images: EventImage[] = item.Images?.map((img: any, index: number) => ({
+      id: `${item.id}-${index}`,
+      imageUrl: img.url?.startsWith('http') ? img.url : `${STRAPI_BASE_URL}${img.url}`,
+      thumbnailUrl: img.formats?.thumbnail?.url 
+        ? (img.formats.thumbnail.url.startsWith('http') ? img.formats.thumbnail.url : `${STRAPI_BASE_URL}${img.formats.thumbnail.url}`)
+        : (img.url?.startsWith('http') ? img.url : `${STRAPI_BASE_URL}${img.url}`),
+      description: img.caption || img.alternativeText || '',
+      photographer: item.Photographer || undefined,
+      featured: index === 0,
+      uploadDate: new Date(img.createdAt || item.EventDate)
+    })) || [];
+
+    return {
+      id: `strapi-${item.id}`,
+      name: item.Name || 'Untitled Event',
+      slug: item.Slug || '',
+      eventType: mapEventType(item.EventType),
+      date: new Date(item.EventDate),
+      endDate: item.EndDate ? new Date(item.EndDate) : undefined,
+      location: item.Location || '',
+      country: item.Country || 'Dominica',
+      description: item.Description || '',
+      venue: item.Venue || '',
+      images,
+      coverImage: item.CoverImage?.url 
+        ? (item.CoverImage.url.startsWith('http') ? item.CoverImage.url : `${STRAPI_BASE_URL}${item.CoverImage.url}`)
+        : undefined,
+      tags: item.Tags?.tags || item.Tags || [],
+      speakers: item.Speakers?.speakers || item.Speakers || [],
+      attendeesCount: item.AttendeesCount || undefined,
+      featured: item.Featured || false,
+      hostChurch: item.HostChurch || undefined,
+      photographer: item.Photographer || undefined,
+      videoLinks: item.VideoLinks?.links || item.VideoLinks || [],
+      source: 'strapi' as const
+    };
+  }) || [];
+
+  // Add mock data with source marker
+  const mockWithSource: GalleryEvent[] = mockEventsData.map(event => ({
+    ...event,
+    source: 'mock' as const
+  }));
+
+  // Combine Strapi events with mock data (Strapi first)
+  const allEvents = strapiEvents.length > 0 ? [...strapiEvents, ...mockWithSource] : mockWithSource;
+
+  // Function to get a single event by ID or slug
+  const getEventById = (idOrSlug: string): GalleryEvent | undefined => {
+    return allEvents.find(event => 
+      event.id === idOrSlug || 
+      event.slug === idOrSlug ||
+      event.id === `strapi-${idOrSlug}`
+    );
+  };
+
+  return { 
+    events: allEvents, 
+    loading: strapiLoading, 
+    error: strapiError, 
+    getEventById 
+  };
 };
 
 export default UseGalleryApi;

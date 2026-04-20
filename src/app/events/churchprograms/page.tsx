@@ -2,31 +2,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import UseChurchApi from '@/hooks/Events/UseChurchApi'
+import UseChurchApi, { ChurchEvent } from '@/hooks/Events/UseChurchApi'
 import Link from 'next/link';
-
-interface ChurchEvent {
-  id: string;
-  title: string;
-  date: Date;
-  time: string;
-  church: string;
-  location: string;
-  address: string;
-  type: 'chaplaincy-ministries' | 'family-life' | 'personal-ministries' | 'disaster-relief' | 'health-ministries' | 'prayer-ministries' | 'possibility-ministries' | 'ministerial-association' | 'publishing-ministries' | 'laymen-services' | 'ministerial-secretary' | 'spirit-of-prophecy' | 'children-adolescent' | 'mens-ministries' | 'sabbath-school' | 'communications' | 'public-affairs' | 'stewardship-ministries' | 'community-services' | 'campus-ministries' | 'womans-ministries' | 'education' | 'planned-giving' | 'youth-ministries' | 'spiritual-growth' | 'discipleship' | 'bible-knowledge' | 'apologetics-doctrine' | 'leadership-development' | 'fellowship-social' | 'community-outreach' | 'evangelism-mission' | 'health-lifestyle' | 'life-skills' | 'creative-arts' | 'recreation-sports' | 'stewardship-service' | 'identity-purpose' | 'technology-media' | 'adventist-heritage';
-  description: string;
-  targetAudience: string;
-  cost: 'free' | 'paid';
-  costAmount?: number;
-  contactPerson: string;
-  contactEmail: string;
-  contactPhone: string;
-  registrationRequired: boolean;
-  registrationLink?: string;
-  tags: string[];
-  featured: boolean;
-  country: string;
-}
 
 export default function ChurchEvents() {
   

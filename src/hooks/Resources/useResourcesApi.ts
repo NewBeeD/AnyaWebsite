@@ -95,10 +95,10 @@ export const useStrapi = () => {
 
 
 // hooks/useStrapi.js
-export const useStrapiQuery = (endpoint, options = {}) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const useStrapiQuery = (endpoint: string, options: RequestOptions = {}) => {
+  const [data, setData] = useState<StrapiResponse | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {

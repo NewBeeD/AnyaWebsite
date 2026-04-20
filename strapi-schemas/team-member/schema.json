@@ -1,0 +1,103 @@
+{
+  "kind": "collectionType",
+  "collectionName": "team_members",
+  "info": {
+    "singularName": "team-member",
+    "pluralName": "team-members",
+    "displayName": "Team Member",
+    "description": "ANYA leadership team members and executives"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "Name": {
+      "type": "string",
+      "required": true
+    },
+    "Slug": {
+      "type": "uid",
+      "targetField": "Name"
+    },
+    "Role": {
+      "type": "string",
+      "required": true
+    },
+    "Department": {
+      "type": "enumeration",
+      "enum": [
+        "executive_leadership",
+        "vice_presidents",
+        "secretarial_team",
+        "finance_team",
+        "chaplaincy",
+        "education_department",
+        "uniform_club_leaders",
+        "fundraising_team",
+        "public_relations_team",
+        "social_cultural_team",
+        "music_ministry",
+        "health_ministry",
+        "other"
+      ],
+      "required": true
+    },
+    "DepartmentDescription": {
+      "type": "text"
+    },
+    "Church": {
+      "type": "string"
+    },
+    "Email": {
+      "type": "email"
+    },
+    "Phone": {
+      "type": "string"
+    },
+    "Bio": {
+      "type": "richtext"
+    },
+    "ShortBio": {
+      "type": "text",
+      "maxLength": 500
+    },
+    "Expertise": {
+      "type": "json"
+    },
+    "Photo": {
+      "type": "media",
+      "multiple": false,
+      "required": false,
+      "allowedTypes": [
+        "images"
+      ]
+    },
+    "Country": {
+      "type": "enumeration",
+      "enum": [
+        "dominica",
+        "barbados",
+        "both"
+      ],
+      "default": "dominica"
+    },
+    "SocialLinks": {
+      "type": "json"
+    },
+    "DisplayOrder": {
+      "type": "integer",
+      "default": 0
+    },
+    "IsActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "YearsOfService": {
+      "type": "integer"
+    },
+    "JoinedDate": {
+      "type": "date"
+    }
+  }
+}

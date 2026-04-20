@@ -1,18 +1,9 @@
 // app/calendar/page.tsx
+
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import useCalendarApi from '@/hooks/Events/UseCalenderApi';
-
-interface CalendarEvent {
-  id: string;
-  title: string;
-  date: Date;
-  church: string;
-  type: 'conference' | 'workshop' | 'church' | 'youth' | 'other';
-  description?: string;
-  country: string;
-}
+import useCalendarApi, { CalendarEvent } from '@/hooks/Events/UseCalenderApi';
 
 export default function FullCalendarView() {
   const { events, loading, error } = useCalendarApi();
@@ -26,7 +17,7 @@ export default function FullCalendarView() {
   const availableCountries = useMemo(() => {
     if (!events || events.length === 0) return [];
     const countries = Array.from(new Set(events.map(event => event.country)))
-      .filter(country => country && typeof country === 'string')
+      .filter(country => country && typeof country === 'string' && country.toLowerCase() !== 'all')
       .sort();
     return countries;
   }, [events]);
@@ -148,9 +139,11 @@ export default function FullCalendarView() {
         
         if (!typeMatch) return false; // Early exit if type doesn't match
         
-        // Country matching
+        // Country matching - events with country 'All' should appear for all country filters
+        const eventCountry = event.country?.toLowerCase() || '';
         const countryMatch = countryFilter === 'all' || 
-                            (event.country && event.country.toLowerCase() === countryFilter.toLowerCase());
+                            eventCountry === 'all' ||
+                            eventCountry === countryFilter.toLowerCase();
         
         return countryMatch;
       } catch (error) {

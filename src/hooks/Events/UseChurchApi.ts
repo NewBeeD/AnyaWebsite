@@ -1,8 +1,9 @@
 'use client';
 
-import { useStrapiQuery } from '@/hooks/Events/UseEventsApi';
+import { useMemo } from 'react';
+import useCalendarApi, { CalendarEvent } from '@/hooks/Events/UseCalenderApi';
 
-interface ChurchEvent {
+export interface ChurchEvent {
   id: string;
   title: string;
   date: Date;
@@ -10,7 +11,7 @@ interface ChurchEvent {
   church: string;
   location: string;
   address: string;
-  type: 'chaplaincy-ministries' | 'family-life' | 'personal-ministries' | 'disaster-relief' | 'health-ministries' | 'prayer-ministries' | 'possibility-ministries' | 'ministerial-association' | 'publishing-ministries' | 'laymen-services' | 'ministerial-secretary' | 'spirit-of-prophecy' | 'children-adolescent' | 'mens-ministries' | 'sabbath-school' | 'communications' | 'public-affairs' | 'stewardship-ministries' | 'community-services' | 'campus-ministries' | 'womans-ministries' | 'education' | 'planned-giving' | 'youth-ministries' | 'spiritual-growth' | 'discipleship' | 'bible-knowledge' | 'apologetics-doctrine' | 'leadership-development' | 'fellowship-social' | 'community-outreach' | 'evangelism-mission' | 'health-lifestyle' | 'life-skills' | 'creative-arts' | 'recreation-sports' | 'stewardship-service' | 'identity-purpose' | 'technology-media' | 'adventist-heritage';
+  type: string;
   description: string;
   targetAudience: string;
   cost: 'free' | 'paid';
@@ -20,9 +21,11 @@ interface ChurchEvent {
   contactPhone: string;
   registrationRequired: boolean;
   registrationLink?: string;
+  image?: string;
   tags: string[];
   featured: boolean;
   country: string;
+  ministries?: string;
 }
 
 interface ChurchApiResult {
@@ -31,66 +34,48 @@ interface ChurchApiResult {
   error: any;
 }
 
-export default function useCalendarApi(): ChurchApiResult {
+export default function UseChurchApi(): ChurchApiResult {
+  const { events: allEvents, loading, error } = useCalendarApi();
 
-  // const { data, loading, error } = useStrapiQuery('/events?populate=*');
-  // Filter at the API level instead of client-side
-  const { data, loading, error } = useStrapiQuery('/events?populate=*&filters[EventCategory][$eq]=church');
+  const events = useMemo(() => {
+    if (!allEvents || allEvents.length === 0) return [];
 
-
-  if (loading || error || !data) {
-    return { events: [], loading, error };
-  }
-
-  const events =
-    data?.data?.map((item: any) => ({
-      id: item.id,
-      title: item.Title ?? 'Untitled Event',
-      date: new Date(item.Date),
-      time: extractTime(item.Date),
-      location: item.Location,
-      address: item.Address,
-      church: item.Church ?? 'Unknown Church',
-      type: item.EventType,
-      description: item.Description ?? 'No description',
-      targetAudience: item.TargetAudience,
-      cost: item.CostType,
-      costAmount: item.CostAmount,
-      registrationRequired: item.RegistrationRequired,
-      registrationLink: item.RegistrationLink,
-      tags: Array.isArray(item.Tags) ? item.Tags : (typeof item.Tags === 'string' ? item.Tags.split(',').map(t => t.trim()) : []),
-      featured: item.Featured,
-      contactPerson: item.ContactPerson,
-      contactEmail: item.ContactEmail,
-      contactPhone: item.ContactPhone,
-      country: item.Country,
-
-    })) ?? []; 
-   
+    // Filter events with type 'church' or 'workshop' (church programs)
+    return allEvents
+      .filter((event: CalendarEvent) => event.type === 'church' || event.type === 'workshop')
+      .map((event: CalendarEvent): ChurchEvent => ({
+        id: event.id,
+        title: event.title,
+        date: event.date,
+        time: formatTime(event.date),
+        church: event.church || 'ECC',
+        location: event.country || 'ECC',
+        address: '',
+        type: event.ministries || event.type,
+        description: event.description || 'Church program event',
+        targetAudience: 'All members',
+        cost: 'free',
+        costAmount: 0,
+        contactPerson: '',
+        contactEmail: '',
+        contactPhone: '',
+        registrationRequired: false,
+        registrationLink: '',
+        image: event.image || '',
+        tags: event.ministries ? event.ministries.split(',').map(m => m.trim()) : [],
+        featured: false,
+        country: event.country || 'All',
+        ministries: event.ministries
+      }));
+  }, [allEvents]);
 
   return { events, loading, error };
 }
 
-
-
-function extractTime(
-  dateString: string, 
-  options: { includeSeconds?: boolean; timeZone?: 'local' | 'utc' } = {}
-): string {
-  const { includeSeconds = false, timeZone = 'local' } = options;
-  
-  const date = new Date(dateString);
-  
-  // Use UTC or local time
-  const getHours = timeZone === 'utc' ? date.getUTCHours() : date.getHours();
-  const getMinutes = timeZone === 'utc' ? date.getUTCMinutes() : date.getMinutes();
-  const getSeconds = timeZone === 'utc' ? date.getUTCSeconds() : date.getSeconds();
-
-  const hours = getHours.toString().padStart(2, '0');
-  const minutes = getMinutes.toString().padStart(2, '0');
-  const seconds = getSeconds.toString().padStart(2, '0');
-
-  return includeSeconds ? `${hours}:${minutes}:${seconds}` : `${hours}:${minutes}`;
+function formatTime(date: Date): string {
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
+  return `${hours}:${minutes}`;
 }
 
 

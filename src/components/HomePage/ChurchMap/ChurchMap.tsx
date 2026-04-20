@@ -1,7 +1,18 @@
 // components/ChurchMapShowcase.tsx
 import Link from 'next/link';
+import { churchData, getDominicaChurches, getBarbadosChurches } from '@/data/churchData';
 
 export default function ChurchMapShowcase() {
+  // Calculate actual stats from church data
+  const totalChurches = churchData.length;
+  const dominicaChurches = getDominicaChurches().length;
+  const barbadosChurches = getBarbadosChurches().length;
+  
+  // Get unique regions
+  const dominicaRegions = new Set(getDominicaChurches().map(c => c.region)).size;
+  const barbadosRegions = new Set(getBarbadosChurches().map(c => c.region)).size;
+  const totalRegions = dominicaRegions + barbadosRegions;
+
   return (
     <section className="py-16! bg-white">
       <div className="container mx-auto! px-4! max-w-6xl">
@@ -9,10 +20,10 @@ export default function ChurchMapShowcase() {
         {/* Section Header */}
         <div className="text-center mb-12!">
           <h2 className="text-3xl font-bold text-gray-900 mb-4!">
-            90 Churches Across the Island
+            {totalChurches} Churches Across Two Countries
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto!">
-            Find a welcoming church community near you, no matter where you are on the island
+            Find a welcoming church community near you in Dominica or Barbados
           </p>
         </div>
 
@@ -23,16 +34,16 @@ export default function ChurchMapShowcase() {
             <div className="absolute inset-8 bg-gradient-to-br from-green-100 to-blue-100 rounded-2xl border-2 border-green-200">
               
               {/* Map Dots representing churches */}
-              <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="absolute top-1/4 left-1/4 w-3 h-3 bg-green-500 rounded-full animate-pulse" title="Dominica"></div>
+              <div className="absolute top-1/3 right-1/3 w-3 h-3 bg-blue-500 rounded-full animate-pulse" title="Barbados"></div>
+              <div className="absolute bottom-1/4 left-1/3 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               <div className="absolute top-1/2 left-1/2 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-              <div className="absolute bottom-1/3 right-1/4 w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
+              <div className="absolute bottom-1/3 right-1/4 w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               
               {/* More dots for visual density */}
-              <div className="absolute top-2/5 left-2/5 w-2 h-2 bg-blue-400 rounded-full"></div>
+              <div className="absolute top-2/5 left-2/5 w-2 h-2 bg-green-400 rounded-full"></div>
               <div className="absolute bottom-2/5 right-2/5 w-2 h-2 bg-blue-400 rounded-full"></div>
-              <div className="absolute top-3/5 left-1/5 w-2 h-2 bg-blue-400 rounded-full"></div>
+              <div className="absolute top-3/5 left-1/5 w-2 h-2 bg-green-400 rounded-full"></div>
               <div className="absolute bottom-1/5 right-3/5 w-2 h-2 bg-blue-400 rounded-full"></div>
               
             </div>
@@ -41,7 +52,7 @@ export default function ChurchMapShowcase() {
             <div className="relative z-10 text-center bg-white/90 backdrop-blur-sm rounded-2xl p-6! shadow-lg">
               <div className="text-4xl mb-2">🗺️</div>
               <h3 className="font-bold text-gray-900 text-lg mb-2">Interactive Church Map</h3>
-              <p className="text-gray-600">90 locations across the island</p>
+              <p className="text-gray-600">{totalChurches} locations across 2 countries</p>
             </div>
           </div>
         </div>
@@ -49,20 +60,20 @@ export default function ChurchMapShowcase() {
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6! mb-8! text-center">
           <div>
-            <div className="text-2xl font-bold text-blue-600">30+</div>
+            <div className="text-2xl font-bold text-blue-600">{totalChurches}</div>
             <div className="text-sm text-gray-600">Churches</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-blue-600">5</div>
+            <div className="text-2xl font-bold text-green-600">{dominicaChurches}</div>
+            <div className="text-sm text-gray-600">🇩🇲 Dominica</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-purple-600">{barbadosChurches}</div>
+            <div className="text-sm text-gray-600">🇧🇧 Barbados</div>
+          </div>
+          <div>
+            <div className="text-2xl font-bold text-indigo-600">{totalRegions}</div>
             <div className="text-sm text-gray-600">Regions</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-blue-600">20+</div>
-            <div className="text-sm text-gray-600">Communities</div>
-          </div>
-          <div>
-            <div className="text-2xl font-bold text-blue-600">24/7</div>
-            <div className="text-sm text-gray-600">Accessible</div>
           </div>
         </div>
 

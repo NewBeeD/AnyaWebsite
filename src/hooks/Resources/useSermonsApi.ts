@@ -2,7 +2,7 @@
 
 import { useStrapiQuery } from '@/hooks/Events/UseEventsApi';
 
-interface Sermon {
+export interface Sermon {
   id: string;
   title: string;
   preacher: string;
@@ -32,7 +32,7 @@ interface SermonApiResult {
 export default function useCalendarApi(): SermonApiResult {
 
 
-  const { data, loading, error } = useStrapiQuery('/sermons?populate=*');
+  const { data, loading, error }: any = useStrapiQuery('/sermons?populate=*');
 
 
   if (loading || error || !data) {
@@ -67,9 +67,9 @@ export default function useCalendarApi(): SermonApiResult {
 }
 
 
-function toLowerCase(point){
-
-  return point.toLowerCase();
+function toLowerCase(point: any): string {
+  if (point == null) return '';
+  return String(point).toLowerCase();
 }
 
 
