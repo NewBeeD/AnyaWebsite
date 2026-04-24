@@ -30,6 +30,7 @@ export interface GalleryEvent {
   tags: string[];
   speakers?: string[];
   attendeesCount?: number;
+  capacity?: number;
   featured?: boolean;
   hostChurch?: string;
   photographer?: string;
