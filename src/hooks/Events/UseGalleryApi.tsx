@@ -31,6 +31,7 @@ export interface GalleryEvent {
   speakers?: string[];
   attendeesCount?: number;
   capacity?: number;
+  registrationCount?: number;
   featured?: boolean;
   hostChurch?: string;
   photographer?: string;

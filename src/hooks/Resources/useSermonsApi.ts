@@ -1,5 +1,6 @@
 'use client';
 
+import type { BlocksContent } from '@strapi/blocks-react-renderer';
 import { useStrapiQuery } from '@/hooks/Events/UseEventsApi';
 
 export interface Sermon {
@@ -12,7 +13,7 @@ export interface Sermon {
   series: string;
   seriesPart?: number;
   description: string;
-  content: string;
+  content: BlocksContent | string | null;
   readingTime: string;
   tags: string[];
   viewCount: number;

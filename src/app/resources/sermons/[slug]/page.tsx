@@ -5,7 +5,15 @@ import { useState, useEffect } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import useSermonApi, { Sermon } from '@/hooks/Resources/useSermonsApi';
 import Link from 'next/link';
-import { BlocksRenderer } from '@strapi/blocks-react-renderer';
+import { BlocksRenderer, type BlocksContent } from '@strapi/blocks-react-renderer';
+
+function getSermonBlocksContent(content: Sermon['content']): BlocksContent | null {
+  return Array.isArray(content) ? content : null;
+}
+
+function getSermonTextContent(content: Sermon['content']): string {
+  return typeof content === 'string' ? content : '';
+}
 
 // Define proper TypeScript interfaces for the block props
 interface HeadingBlockProps {
@@ -237,6 +245,9 @@ export default function SermonDetail() {
     }
   };
 
+  const sermonBlocksContent = sermon ? getSermonBlocksContent(sermon.content) : null;
+  const sermonTextContent = sermon ? getSermonTextContent(sermon.content) : '';
+
   if (loading) {
     return (
       <div className="min-h-screen! bg-gray-50! flex! items-center! justify-center!">
@@ -409,13 +420,23 @@ export default function SermonDetail() {
 
         {/* Sermon Content */}
         <div className="bg-white! rounded-lg! shadow-sm! border! border-gray-200! p-6! mb-6!">
-          {sermon.content ? (
+          {sermonBlocksContent ? (
             <div className="prose! prose-lg! max-w-none!">
               <BlocksRenderer 
-                content={sermon.content} 
+                content={sermonBlocksContent} 
                 blocks={blocksRendererConfig as any}
                 modifiers={modifiersRendererConfig}
               />
+            </div>
+          ) : sermonTextContent ? (
+            <div className="text-gray-700! leading-relaxed! space-y-4!">
+              {sermonTextContent
+                .split(/\n\s*\n/)
+                .map((paragraph) => paragraph.trim())
+                .filter(Boolean)
+                .map((paragraph, index) => (
+                  <p key={index}>{paragraph}</p>
+                ))}
             </div>
           ) : (
             <div className="text-center! py-8! text-gray-500!">

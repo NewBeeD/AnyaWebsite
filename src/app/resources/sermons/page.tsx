@@ -6,6 +6,40 @@ import useSermonApi, { Sermon } from '@/hooks/Resources/useSermonsApi'
 
 import Link from 'next/link';
 
+function getTextFromBlockNode(node: unknown): string {
+  if (!node || typeof node !== 'object') {
+    return '';
+  }
+
+  const currentNode = node as { text?: unknown; children?: unknown };
+
+  if (typeof currentNode.text === 'string') {
+    return currentNode.text;
+  }
+
+  if (Array.isArray(currentNode.children)) {
+    return currentNode.children.map(getTextFromBlockNode).join(' ');
+  }
+
+  return '';
+}
+
+function getSermonPreview(content: Sermon['content']): string {
+  if (typeof content === 'string') {
+    return content;
+  }
+
+  if (Array.isArray(content)) {
+    return content
+      .map(getTextFromBlockNode)
+      .join(' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  return '';
+}
+
 export default function Sermons() {
 
 
@@ -621,7 +655,7 @@ export default function Sermons() {
                 <h4 className="text-sm! font-medium! text-gray-900! mb-3!">Sermon Preview</h4>
                 <div className="prose! prose-sm! max-w-none!">
                   <p className="text-gray-600! line-clamp-4!">
-                    {selectedSermon.content}
+                    {getSermonPreview(selectedSermon.content)}
                   </p>
                 </div>
                 <p className="text-xs! text-gray-500! mt-2!">Preview of the first few paragraphs...</p>
